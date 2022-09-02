@@ -1,0 +1,15 @@
+[package]
+name = "hackage-pack"
+version = "0.1.0"
+edition = "2021"
+description = "Turn any crate into an Haskell library"
+license = "MIT"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+ansi_term = "0.12"
+displaydoc = "0.2"
+serde = { version = "1.0", features = ["derive"] }
+toml = "0.5"
+thiserror = "1.0"

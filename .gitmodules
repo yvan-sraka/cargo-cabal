@@ -1,0 +1,6 @@
+[submodule "demo/greetings-0.1.0.0"]
+	path = demo/greetings-0.1.0.0
+	url = git@github.com:yvan-sraka/greetings-0.1.0.0.git
+[submodule "demo/test-0.1.0.0"]
+	path = demo/test-0.1.0.0
+	url = git@github.com:yvan-sraka/test-0.1.0.0.git
