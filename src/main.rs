@@ -13,7 +13,11 @@ fn main() {
         println!("{}{}", Colour::Red.bold().paint("Error: "), e);
     } else {
         println!(
-            "✨ FIXME: write a little paragraph on what to do next / how to use `hs-bindgen`?!"
+            "✨ Cabal files generated!
+-------------------------
+You should now be able to compile your library with `cabal build` and should
+add `hs-bindgen` to your crate dependencies list and decorate the Rust function
+you want to expose with `#[hs_bindgen]` attribute macro."
         );
     }
 }
@@ -36,9 +40,9 @@ fn routine() -> Result<(), Error> {
 
     // Check that `hackage-pack` have not been already run ...
     let cabal = format!("{name}.cabal");
-    (Path::new(&cabal).exists()
+    (!(Path::new(&cabal).exists()
         || Path::new("Setup.hs").exists()
-        || Path::new(".hsbindgen").exists())
+        || Path::new(".hsbindgen").exists()))
     .then_some(())
     .ok_or_else(|| Error::FileAlreadyExist(name.to_owned()))?;
 
