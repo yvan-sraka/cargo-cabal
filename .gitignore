@@ -1,2 +1,5 @@
+.direnv
 .DS_Store
+extra/cabal-pack.cast
+extra/cabal-pack.gif
 target

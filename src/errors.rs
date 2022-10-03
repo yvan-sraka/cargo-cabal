@@ -10,7 +10,7 @@ pub(crate) enum Error {
     /// Fail to parse TOML content of `Cargo.toml` file
     WrongCargoToml,
     /** Your `Cargo.toml` file should contain a [package] section
-     *  n.b. Cargo Workspace aren't currently supported by `hs-pack`
+     *  n.b. Cargo Workspace aren't currently supported by `cabal-pack`
      */
     NotCargoPackage,
     /// Your `Cargo.toml` [package] section should contain a `name` field
@@ -25,7 +25,7 @@ pub(crate) enum Error {
     /// Fail to write `{0}` file
     FailedToWriteFile(String),
     /** `{0}.cabal`, `Setup.hs` or `.hsbindgen` file already exist,
-     *  please back up it before re-running `hs-pack` command
+     *  please back up it before re-running `cabal-pack` command
      */
     FileAlreadyExist(String),
 }

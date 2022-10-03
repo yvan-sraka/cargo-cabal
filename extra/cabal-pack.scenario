@@ -1,31 +1,6 @@
-<!-- cargo-sync-readme start -->
-
-# `cabal-pack`
-
-A tool that helps you to turn in one command a Rust crate into a Haskell
-Cabal library!
-
-To generate bindings, you need to annotate the Rust function you want to
-expose with [`hs-bindgen`](https://github.com/yvan-sraka/hs-bindgen) macro.
-
-## Getting started
-
-Here a little screencast demonstrating how it works (commands walkthrough
-are just pasted below):
-
-[![asciinema](extra/cabal-pack-opt.gif)](https://asciinema.org/a/525790)
-
-You need in your `$PATH` a working Rust and Haskell environment, if you use
-[Nix](https://nixos.org) you can just enter:
-`nix-shell -p cabal-install ghc cargo rustc`
-
----
-
-Welcome in this little `hackage-pack` / `hs-bindgen` demo 🙂
-
-Let's start by creating a dumb Rust library!
-
-```text
+#! { "step": 0.10, "width": 80, "height": 20 }
+$ # Welcome in this little `cabal-pack` / `hs-bindgen` demo :)
+$ # Let's start by creating a dumb Rust library!
 $ cargo new --lib greetings
      Created library `greetings` package
 
@@ -34,34 +9,26 @@ greetings
 ├── Cargo.toml
 └── src
     └── lib.rs
-
 1 directory, 2 files
 
 $ cd greetings
-```
 
-Add `hs-bindgen` to the dependencies list:
-
-```text
+$ # Add `hs-bindgen` to the dependencies list:
 $ cargo add hs-bindgen
     Updating crates.io index
       Adding hs-bindgen v0.3.0 to dependencies.
-```
 
-And use it to decorate the function we want to expose:
+$ # And use it to decorate the function we want to expose:
+$ cat -n src/lib.rs
+     1	use hs_bindgen::hs_bindgen;
+     2
+     3	#[hs_bindgen]
+     4	fn hello(name: &str) {
+     5	    println!("Hello, {name}!");
+     6	}
 
-* `src/lib.rs`:
+#timeout: 1.5
 
-```rust
-use hs_bindgen::hs_bindgen;
-
-#[hs_bindgen]
-fn hello(name: &str) {
-    println!("Hello, {name}!");
-}
-```
-
-```text
 $ cargo build
    Compiling proc-macro2 v1.0.46
    Compiling unicode-ident v1.0.4
@@ -81,46 +48,35 @@ error: custom attribute panicked
   |
   = help: message: fail to read content of `.hsbindgen` configuration file
           n.b. you have to run the command `cabal-pack` to generate it: Os { code: 2, kind: NotFound, message: "No such file or directory" }
-
 error: could not compile `greetings` due to previous error
-```
 
-So, we will use `hackage-pack` to check our setup and generate Cabal files:
-
-```text
-$ cargo install hackage-pack
+$ # So, we will use `cabal-pack` to check our setup and generate Cabal files:
+$ cargo install cabal-pack
     Updating crates.io index
-     Ignored package `hackage-pack v0.3.0` is already installed, use --force to override
+     Ignored package `cabal-pack v0.3.0` is already installed, use --force to override
 
-$ hackage-pack
+$ cabal-pack
 Error: Your `Cargo.toml` file should contain a [lib] section with a `crate-type` field
 that contains `staticlib` value:
-
 [lib]
 crate-type = ["staticlib"]
-```
 
-Right, we edit the `Cargo.toml` accordingly:
+$ # Right, we edit the `Cargo.toml` accordingly:
+$ cat -n Cargo.toml
+     1	[package]
+     2	name = "greetings"
+     3	version = "0.1.0"
+     4	edition = "2021"
+     5
+     6	# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+     7
+     8	[dependencies]
+     9	hs-bindgen = "0.3.0"
+    10
+    11	[lib]
+    12	crate-type = ["staticlib"]
 
-* `Cargo.toml`:
-
-```toml
-[package]
-name = "greetings"
-version = "0.1.0"
-edition = "2021"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
-[dependencies]
-hs-bindgen = "0.3.0"
-
-[lib]
-crate-type = ["staticlib"]
-```
-
-```text
-$ hackage-pack
+$ cabal-pack
 Cabal files generated!
 **********************
 You should now be able to compile your library with `cabal build` and should
@@ -129,9 +85,9 @@ you want to expose with `#[hs_bindgen]` attribute macro.
 
 $ ls
 Cargo.lock  Cargo.toml  Setup.hs  greetings.cabal  src  target
-```
 
-```text
+#timeout: 1.5
+
 $ cargo build
    Compiling hs-bindgen v0.3.0 (/Users/yvan/GitHub/hs-bindgen)
    Compiling greetings v0.1.0 (/Users/yvan/demo/greetings)
@@ -144,16 +100,12 @@ In order, the following will be built (use -v for more details):
 Preprocessing library for greetings-0.1.0..
 Building library for greetings-0.1.0..
 [1 of 1] Compiling Greetings        ( src/Greetings.hs, /Users/yvan/demo/greetings/dist-newstyle/build/aarch64-osx/ghc-9.0.2/greetings-0.1.0/build/Greetings.o, /Users/yvan/demo/greetings/dist-newstyle/build/aarch64-osx/ghc-9.0.2/greetings-0.1.0/build/Greetings.dyn_o )
-```
 
-It works! And so `cargo build` too if you just want to use the library in a
-Rust project!
+$ # It works!
 
----
+--
 
-Now let's try to use our freshly generated library in an Haskell app 😉
-
-```text
+$ # Now let's try to use our freshly generated library in an Haskell app ;)
 $ cd ..
 $ cabal init --non-interactive test
 [Log] Guessing dependencies...
@@ -172,47 +124,39 @@ test
 │   └── Main.hs
 ├── CHANGELOG.md
 └── test.cabal
-
 1 directory, 3 files
-```
 
-We create a `cabal.project` (equivalent to cargo workspace) to perform a
-local test without having to upload `greetings` on hackage:
+$ # We create a `cabal.project` (equivalent to cargo workspace) to perform a
+$ # local test without having to upload `greetings` on hackage:
+$ cat -n cabal.project
+     1	packages: ./greetings ./test
 
-* `cabal.project`:
+$ # We edit `test.cabal` to make it depends on `greetings` library:
+$ cat -n test/test.cabal
+    ..
+    53	executable test
+    ..
+    66	   -- Other library packages from which modules are imported.
+    67	   build-depends:    base, greetings
+    ..
+    .. (output partially omitted)
 
-```cabal
-packages: ./greetings ./test
-```
+#timeout: 1.5
 
-We edit `test.cabal` to make it depends on `greetings` library:
+$ # We write a minimalist `main` function that will make call `hello` from
+$ # `Greetings` module
+$ cat -n test/app/Main.hs
+     1	module Main where
+     2	
+     3	import Foreign.C.String
+     4	import Greetings
+     5	
+     6	main :: IO ()
+     7	main = hello =<< newCString "Rust"
 
-* `test/test.cabal` (content partially omitted):
+#timeout: 1.5
 
-```cabal
-executable test
-    -- Other library packages from which modules are imported.
-    build-depends:    base, greetings
-```
-
-We write a minimalist `main` function that will make call `hello` from
-`Greetings` module
-
-* `test/app/Main.hs`:
-
-```haskell
-module Main where
-
-import Foreign.C.String
-import Greetings
-
-main :: IO ()
-main = hello =<< newCString "Rust"
-```
-
-Let's check if everything works as expected:
-
-```text
+$ # Let's check if everything works as expected:
 $ cabal run test
 Build profile: -w ghc-9.0.2 -O1
 In order, the following will be built (use -v for more details):
@@ -223,19 +167,7 @@ Building executable 'test' for test-0.1.0.0..
 [1 of 1] Compiling Main             ( app/Main.hs, /Users/yvan/demo/dist-newstyle/build/aarch64-osx/ghc-9.0.2/test-0.1.0.0/x/test/build/test/test-tmp/Main.o )
 Linking /Users/yvan/demo/dist-newstyle/build/aarch64-osx/ghc-9.0.2/test-0.1.0.0/x/test/build/test/test ...
 Hello, Rust!
-```
 
-That's all folks! Happy hacking 🙂
+#timeout: 1.5
 
-## Acknowledgments
-
-⚠️ This is still a working experiment, not yet production ready.
-
-`cabal-pack` was heavily inspired by other interoperability initiatives, as
-[`wasm-pack`](https://github.com/rustwasm/wasm-pack) and
-[`Maturin`](https://github.com/PyO3/maturin).
-
-This project was part of a work assignment as an
-[IOG](https://github.com/input-output-hk) contractor.
-
-<!-- cargo-sync-readme end -->
+$ # That's all folks! Happy hacking :)

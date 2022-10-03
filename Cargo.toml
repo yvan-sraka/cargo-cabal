@@ -1,9 +1,9 @@
 [package]
-name = "hs-pack"
-version = "0.2.0"
+name = "cabal-pack"
+version = "0.3.0"
 edition = "2021"
-description = "Turn any crate into an Haskell library"
-repository = "https://github.com/yvan-sraka/hs-pack"
+description = "A tool that helps you to turn in one command a Rust crate into a Haskell Cabal library"
+repository = "https://github.com/yvan-sraka/cabal-pack"
 license = "MIT"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html

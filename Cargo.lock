@@ -12,6 +12,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "cabal-pack"
+version = "0.3.0"
+dependencies = [
+ "ansi_term",
+ "displaydoc",
+ "serde",
+ "thiserror",
+ "toml",
+]
+
+[[package]]
 name = "displaydoc"
 version = "0.2.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -20,17 +31,6 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn",
-]
-
-[[package]]
-name = "hs-pack"
-version = "0.2.0"
-dependencies = [
- "ansi_term",
- "displaydoc",
- "serde",
- "thiserror",
- "toml",
 ]
 
 [[package]]

@@ -1,4 +1,4 @@
-const VERSION: &str = "0.2.0";
+const VERSION: &str = "0.3.0";
 
 pub(crate) fn generate(module: &str) -> String {
     format!(
@@ -11,7 +11,7 @@ default = \"{module}\"
 # There is an unlikely future where instead we have a Rust `.cabal` parser,
 # that most likely would rely under the hood on a Haskell static lib wrapper
 # of `Cabal.Parse` or https://hackage.haskell.org/package/Cabal-syntax library.
-# But even in this case, it would be nice to know the `hs-pack` version that
+# But even in this case, it would be nice to know the `cabal-pack` version that
 # generated the `.cabal` file used.
 
 version = \"{VERSION}\""
