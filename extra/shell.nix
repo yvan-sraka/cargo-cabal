@@ -1,14 +1,5 @@
-{ pkgs ? import <nixpkgs> { } }:
-with pkgs;
-mkShell {
-  buildInputs = [
-    asciinema
-    asciinema-scenario
-    # FIXME: this `agg` dependency is OS-specific, rather use `nix develop`
-    # and rewrite all this as a flake!
-    darwin.apple_sdk.frameworks.Security
-    gifsicle
-  ];
-  # FIXME: package `agg` with Nix rather tan rely on this impure hack
-  shellHook = "cargo install --git https://github.com/asciinema/agg";
-}
+(import (fetchTarball {
+  url =
+    "https://github.com/edolstra/flake-compat/archive/b4a34015c698c7793d592d66adbab377907a2be8.tar.gz";
+  sha256 = "1qc703yg0babixi6wshn5wm2kgl5y1drcswgszh4xxzbrwkk9sv7";
+}) { src = ./.; }).shellNix

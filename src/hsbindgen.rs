@@ -1,4 +1,4 @@
-const VERSION: &str = "0.3.0";
+const VERSION: &str = "0.3.1";
 
 pub(crate) fn generate(module: &str) -> String {
     format!(

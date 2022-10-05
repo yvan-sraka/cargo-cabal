@@ -24,7 +24,7 @@ pub(crate) enum Error {
     NoCargoStaticLibTarget,
     /// Fail to write `{0}` file
     FailedToWriteFile(String),
-    /** `{0}.cabal`, `Setup.hs` or `.hsbindgen` file already exist,
+    /** `{0}.cabal`, `Setup.lhs` or `.hsbindgen` file already exist,
      *  please back up it before re-running `cabal-pack` command
      */
     FileAlreadyExist(String),

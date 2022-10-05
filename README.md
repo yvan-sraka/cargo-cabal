@@ -21,7 +21,7 @@ You need in your `$PATH` a working Rust and Haskell environment, if you use
 
 ---
 
-Welcome in this little `hackage-pack` / `hs-bindgen` demo 🙂
+Welcome in this little `cabal-pack` / `hs-bindgen` demo 🙂
 
 Let's start by creating a dumb Rust library!
 
@@ -45,7 +45,7 @@ Add `hs-bindgen` to the dependencies list:
 ```text
 $ cargo add hs-bindgen
     Updating crates.io index
-      Adding hs-bindgen v0.3.0 to dependencies.
+      Adding hs-bindgen v0.3.1 to dependencies.
 ```
 
 And use it to decorate the function we want to expose:
@@ -71,7 +71,7 @@ $ cargo build
    Compiling serde v1.0.145
    Compiling semver v1.0.14
    Compiling toml v0.5.9
-   Compiling hs-bindgen v0.3.0 (/Users/yvan/GitHub/hs-bindgen)
+   Compiling hs-bindgen v0.3.1 (/Users/yvan/GitHub/hs-bindgen)
    Compiling greetings v0.1.0 (/Users/yvan/demo/greetings)
 error: custom attribute panicked
  --> src/lib.rs:3:1
@@ -85,14 +85,14 @@ error: custom attribute panicked
 error: could not compile `greetings` due to previous error
 ```
 
-So, we will use `hackage-pack` to check our setup and generate Cabal files:
+So, we will use `cabal-pack` to check our setup and generate Cabal files:
 
 ```text
-$ cargo install hackage-pack
+$ cargo install cabal-pack
     Updating crates.io index
-     Ignored package `hackage-pack v0.3.0` is already installed, use --force to override
+     Ignored package `cabal-pack v0.3.1` is already installed, use --force to override
 
-$ hackage-pack
+$ cabal-pack
 Error: Your `Cargo.toml` file should contain a [lib] section with a `crate-type` field
 that contains `staticlib` value:
 
@@ -113,14 +113,14 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-hs-bindgen = "0.3.0"
+hs-bindgen = "0.3.1"
 
 [lib]
 crate-type = ["staticlib"]
 ```
 
 ```text
-$ hackage-pack
+$ cabal-pack
 Cabal files generated!
 **********************
 You should now be able to compile your library with `cabal build` and should
@@ -128,12 +128,12 @@ add `hs-bindgen` to your crate dependencies list and decorate the Rust function
 you want to expose with `#[hs_bindgen]` attribute macro.
 
 $ ls
-Cargo.lock  Cargo.toml  Setup.hs  greetings.cabal  src  target
+Cargo.lock  Cargo.toml  Setup.lhs  greetings.cabal  src  target
 ```
 
 ```text
 $ cargo build
-   Compiling hs-bindgen v0.3.0 (/Users/yvan/GitHub/hs-bindgen)
+   Compiling hs-bindgen v0.3.1 (/Users/yvan/GitHub/hs-bindgen)
    Compiling greetings v0.1.0 (/Users/yvan/demo/greetings)
     Finished dev [unoptimized + debuginfo] target(s) in 0.55s
 

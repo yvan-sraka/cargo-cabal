@@ -19,7 +19,7 @@
 //!
 //! ---
 //!
-//! Welcome in this little `hackage-pack` / `hs-bindgen` demo 🙂
+//! Welcome in this little `cabal-pack` / `hs-bindgen` demo 🙂
 //!
 //! Let's start by creating a dumb Rust library!
 //!
@@ -43,7 +43,7 @@
 //! ```text
 //! $ cargo add hs-bindgen
 //!     Updating crates.io index
-//!       Adding hs-bindgen v0.3.0 to dependencies.
+//!       Adding hs-bindgen v0.3.1 to dependencies.
 //! ```
 //!
 //! And use it to decorate the function we want to expose:
@@ -69,7 +69,7 @@
 //!    Compiling serde v1.0.145
 //!    Compiling semver v1.0.14
 //!    Compiling toml v0.5.9
-//!    Compiling hs-bindgen v0.3.0 (/Users/yvan/GitHub/hs-bindgen)
+//!    Compiling hs-bindgen v0.3.1 (/Users/yvan/GitHub/hs-bindgen)
 //!    Compiling greetings v0.1.0 (/Users/yvan/demo/greetings)
 //! error: custom attribute panicked
 //!  --> src/lib.rs:3:1
@@ -83,14 +83,14 @@
 //! error: could not compile `greetings` due to previous error
 //! ```
 //!
-//! So, we will use `hackage-pack` to check our setup and generate Cabal files:
+//! So, we will use `cabal-pack` to check our setup and generate Cabal files:
 //!
 //! ```text
-//! $ cargo install hackage-pack
+//! $ cargo install cabal-pack
 //!     Updating crates.io index
-//!      Ignored package `hackage-pack v0.3.0` is already installed, use --force to override
+//!      Ignored package `cabal-pack v0.3.1` is already installed, use --force to override
 //!
-//! $ hackage-pack
+//! $ cabal-pack
 //! Error: Your `Cargo.toml` file should contain a [lib] section with a `crate-type` field
 //! that contains `staticlib` value:
 //!
@@ -111,14 +111,14 @@
 //! # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 //!
 //! [dependencies]
-//! hs-bindgen = "0.3.0"
+//! hs-bindgen = "0.3.1"
 //!
 //! [lib]
 //! crate-type = ["staticlib"]
 //! ```
 //!
 //! ```text
-//! $ hackage-pack
+//! $ cabal-pack
 //! Cabal files generated!
 //! **********************
 //! You should now be able to compile your library with `cabal build` and should
@@ -126,12 +126,12 @@
 //! you want to expose with `#[hs_bindgen]` attribute macro.
 //!
 //! $ ls
-//! Cargo.lock  Cargo.toml  Setup.hs  greetings.cabal  src  target
+//! Cargo.lock  Cargo.toml  Setup.lhs  greetings.cabal  src  target
 //! ```
 //!
 //! ```text
 //! $ cargo build
-//!    Compiling hs-bindgen v0.3.0 (/Users/yvan/GitHub/hs-bindgen)
+//!    Compiling hs-bindgen v0.3.1 (/Users/yvan/GitHub/hs-bindgen)
 //!    Compiling greetings v0.1.0 (/Users/yvan/demo/greetings)
 //!     Finished dev [unoptimized + debuginfo] target(s) in 0.55s
 //!
@@ -283,7 +283,7 @@ fn routine() -> Result<(), Error> {
     // Check that `cabal-pack` have not been already run ...
     let cabal = format!("{name}.cabal");
     (!(Path::new(&cabal).exists()
-        || Path::new("Setup.hs").exists()
+        || Path::new("Setup.lhs").exists()
         || Path::new(".hsbindgen").exists()))
     .then_some(())
     .ok_or_else(|| Error::FileAlreadyExist(name.to_owned()))?;
@@ -291,8 +291,8 @@ fn routine() -> Result<(), Error> {
     // Generate wanted Cabal files from templates ...
     fs::write(cabal.clone(), cabal::generate(&name, &module, &version))
         .or(Err(Error::FailedToWriteFile(cabal)))?;
-    fs::write("Setup.hs", include_str!("Setup.hs"))
-        .map_err(|_| Error::FailedToWriteFile("Setup.hs".to_owned()))?;
+    fs::write("Setup.lhs", include_str!("Setup.lhs"))
+        .map_err(|_| Error::FailedToWriteFile("Setup.lhs".to_owned()))?;
     fs::write(".hsbindgen", hsbindgen::generate(&module))
         .map_err(|_| Error::FailedToWriteFile(".hsbindgen".to_owned()))?;
 
