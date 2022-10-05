@@ -13,7 +13,7 @@ expose with [`hs-bindgen`](https://github.com/yvan-sraka/hs-bindgen) macro.
 Here a little screencast demonstrating how it works (commands walkthrough
 are just pasted below):
 
-[![asciinema](extra/cabal-pack-opt.gif)](https://asciinema.org/a/525790)
+[![asciinema](extra/cabal-pack-opt.gif)](https://asciinema.org/a/525919)
 
 You need in your `$PATH` a working Rust and Haskell environment, if you use
 [Nix](https://nixos.org) you can just enter:
@@ -45,7 +45,7 @@ Add `hs-bindgen` to the dependencies list:
 ```text
 $ cargo add hs-bindgen
     Updating crates.io index
-      Adding hs-bindgen v0.3.1 to dependencies.
+      Adding hs-bindgen v0.3.2 to dependencies.
 ```
 
 And use it to decorate the function we want to expose:
@@ -71,7 +71,7 @@ $ cargo build
    Compiling serde v1.0.145
    Compiling semver v1.0.14
    Compiling toml v0.5.9
-   Compiling hs-bindgen v0.3.1 (/Users/yvan/GitHub/hs-bindgen)
+   Compiling hs-bindgen v0.3.2 (/Users/yvan/GitHub/hs-bindgen)
    Compiling greetings v0.1.0 (/Users/yvan/demo/greetings)
 error: custom attribute panicked
  --> src/lib.rs:3:1
@@ -90,7 +90,7 @@ So, we will use `cabal-pack` to check our setup and generate Cabal files:
 ```text
 $ cargo install cabal-pack
     Updating crates.io index
-     Ignored package `cabal-pack v0.3.1` is already installed, use --force to override
+     Ignored package `cabal-pack v0.3.2` is already installed, use --force to override
 
 $ cabal-pack
 Error: Your `Cargo.toml` file should contain a [lib] section with a `crate-type` field
@@ -113,7 +113,7 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-hs-bindgen = "0.3.1"
+hs-bindgen = "0.3.2"
 
 [lib]
 crate-type = ["staticlib"]
@@ -133,7 +133,7 @@ Cargo.lock  Cargo.toml  Setup.lhs  greetings.cabal  src  target
 
 ```text
 $ cargo build
-   Compiling hs-bindgen v0.3.1 (/Users/yvan/GitHub/hs-bindgen)
+   Compiling hs-bindgen v0.3.2 (/Users/yvan/GitHub/hs-bindgen)
    Compiling greetings v0.1.0 (/Users/yvan/demo/greetings)
     Finished dev [unoptimized + debuginfo] target(s) in 0.55s
 

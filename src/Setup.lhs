@@ -30,8 +30,8 @@ should be removed before `cabal-pack` stable release.
 > main =
 >   defaultMainWithHooks
 >     simpleUserHooks
->       { confHook = rustConfHook,
-        , buildHook = rustBuildHook
+>       { confHook = rustConfHook
+> --    , buildHook = rustBuildHook
 >       }
 
 This hook could be remove if at some point, likely if this issue is resolved
@@ -59,21 +59,21 @@ https://github.com/haskell/cabal/issues/2641
 It would be nice to remove this hook ot some point, e.g., if this RFC is merged
 in Cabal https://github.com/haskell/cabal/issues/7906
 
-rustBuildHook ::
-  PD.PackageDescription ->
-  LocalBuildInfo ->
-  UserHooks ->
-  BuildFlags ->
-  IO ()
-rustBuildHook description localBuildInfo hooks flags = do
-  putStrLn "******************************************************************"
-  putStrLn "Call `cargo build --release` to build a dependency written in Rust"
-  -- FIXME: add `--target $TARGET` flag to support cross-compiling to $TARGET
-  rawSystemExit (fromFlag $ buildVerbosity flags) "cargo" ["build","--release"]
-  putStrLn "... `rustc` compilation seems to succeed 🦀! Back to Cabal build:"
-  putStrLn "******************************************************************"
-  putStrLn "Back to Cabal build"
-  buildHook simpleUserHooks description localBuildInfo hooks flags
+% rustBuildHook ::
+%   PD.PackageDescription ->
+%   LocalBuildInfo ->
+%   UserHooks ->
+%   BuildFlags ->
+%   IO ()
+% rustBuildHook description localBuildInfo hooks flags = do
+%   putStrLn "******************************************************************"
+%   putStrLn "Call `cargo build --release` to build a dependency written in Rust"
+%   -- FIXME: add `--target $TARGET` flag to support cross-compiling to $TARGET
+%   rawSystemExit (fromFlag $ buildVerbosity flags) "cargo" ["build","--release"]
+%   putStrLn "... `rustc` compilation seems to succeed 🦀! Back to Cabal build:"
+%   putStrLn "******************************************************************"
+%   putStrLn "Back to Cabal build"
+%   buildHook simpleUserHooks description localBuildInfo hooks flags
 
 This handy automation (particularly useful when you want to quickly prototype
 without having to spawn manually `cargo` commands) is disabled by default.
