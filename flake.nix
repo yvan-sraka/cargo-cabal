@@ -10,21 +10,20 @@
     utils.lib.eachDefaultSystem (system:
       let
         pkgs = import nixpkgs { inherit system; };
-        naersk-lib = pkgs.callPackage naersk { };
+        naersk' = pkgs.callPackage naersk { };
+        sync-readme = cargo-sync-readme.defaultPackage.${system};
       in {
-        defaultPackage = naersk-lib.buildPackage ./.;
-        defaultApp = utils.lib.mkApp { drv = self.defaultPackage."${system}"; };
+        defaultPackage = naersk'.buildPackage ./.;
         devShell = with pkgs;
           mkShell {
             buildInputs = [
               cargo
-              cargo-sync-readme.defaultPackage.${system}
               libiconv
-              pre-commit
               rust-analyzer
               rustc
               rustfmt
               rustPackages.clippy
+              sync-readme
             ];
             RUST_SRC_PATH = rustPlatform.rustLibSrc;
           };

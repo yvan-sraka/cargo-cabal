@@ -1,4 +1,4 @@
-pub(crate) fn generate(name: &str) -> String {{
+pub(crate) fn generate(name: &str) -> String {
     format!(
         "{{
   inputs = {{
@@ -11,12 +11,12 @@ pub(crate) fn generate(name: &str) -> String {{
   outputs = {{ self, nixpkgs, utils, haskell-nix, naersk }}:
     utils.lib.eachDefaultSystem (system:
       let
-        naersk-lib = pkgs.callPackage naersk {{ }};
+        naersk' = pkgs.callPackage naersk {{ }};
         overlays = [
           haskell-nix.overlay
           (final: prev: {{
             # Add `extra-libraries` dependencies
-            {name} = naersk-lib.buildPackage {{
+            {name} = naersk'.buildPackage {{
               src = ./.;
               copyLibs = true;
             }};
@@ -47,4 +47,4 @@ pub(crate) fn generate(name: &str) -> String {{
       }});
 }}"
     )
-}}
+}

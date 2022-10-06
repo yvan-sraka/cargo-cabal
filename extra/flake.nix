@@ -7,16 +7,13 @@
 
   outputs = { self, nixpkgs, utils, agg }:
     utils.lib.eachDefaultSystem (system:
-      let pkgs = import nixpkgs { inherit system; };
+      let
+        pkgs = import nixpkgs { inherit system; };
+        agg' = agg.defaultPackage.${system};
       in {
         devShell = with pkgs;
           mkShell {
-            buildInputs = [
-              asciinema
-              asciinema-scenario
-              gifsicle
-              agg.defaultPackage.${system}
-            ];
+            buildInputs = [ agg' asciinema asciinema-scenario gifsicle ];
           };
       });
 }

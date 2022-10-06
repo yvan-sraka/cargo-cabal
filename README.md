@@ -45,7 +45,7 @@ Add `hs-bindgen` to the dependencies list:
 ```text
 $ cargo add hs-bindgen
     Updating crates.io index
-      Adding hs-bindgen v0.3.3 to dependencies.
+      Adding hs-bindgen v0.3.4 to dependencies.
 ```
 
 And use it to decorate the function we want to expose:
@@ -71,7 +71,7 @@ $ cargo build
    Compiling serde v1.0.145
    Compiling semver v1.0.14
    Compiling toml v0.5.9
-   Compiling hs-bindgen v0.3.3 (/Users/yvan/GitHub/hs-bindgen)
+   Compiling hs-bindgen v0.3.4
    Compiling greetings v0.1.0 (/Users/yvan/demo/greetings)
 error: custom attribute panicked
  --> src/lib.rs:3:1
@@ -90,7 +90,7 @@ So, we will use `cabal-pack` to check our setup and generate Cabal files:
 ```text
 $ cargo install cabal-pack
     Updating crates.io index
-     Ignored package `cabal-pack v0.3.3` is already installed, use --force to override
+     Ignored package `cabal-pack v0.3.4` is already installed, use --force to override
 
 $ cabal-pack
 Error: Your `Cargo.toml` file should contain a [lib] section with a `crate-type` field
@@ -99,6 +99,9 @@ that contains `staticlib` value:
 [lib]
 crate-type = ["staticlib"]
 ```
+
+> **N.B.** if you're a Nix user, rather than rely on impure `cargo install`
+> fell free to just `nix run github:yvan-sraka/cabal-pack`
 
 Right, we edit the `Cargo.toml` accordingly:
 
@@ -113,7 +116,7 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-hs-bindgen = "0.3.3"
+hs-bindgen = "0.3.4"
 
 [lib]
 crate-type = ["staticlib"]
@@ -133,7 +136,7 @@ Cargo.lock  Cargo.toml  Setup.lhs  greetings.cabal  src  target
 
 ```text
 $ cargo build
-   Compiling hs-bindgen v0.3.3 (/Users/yvan/GitHub/hs-bindgen)
+   Compiling hs-bindgen v0.3.4
    Compiling greetings v0.1.0 (/Users/yvan/demo/greetings)
     Finished dev [unoptimized + debuginfo] target(s) in 0.55s
 
@@ -233,6 +236,10 @@ The `--enable-nix` CLI arg makes `cabal-pack` generate a
 [haskell.nix](https://github.com/input-output-hk/haskell.nix) /
 [naersk](https://github.com/nix-community/naersk) based `flake.nix` rather
 than the `Setup.lhs`.
+
+> **N.B.** when first working with `hs-bindgen` and Nix flakes, checking if
+> `Cargo.lock` isn't in `.gitignore` and running `cargo build` and
+> `git add —all` before `nix build`, will save you a lot of pain 😉
 
 ## Acknowledgments
 
