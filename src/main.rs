@@ -13,9 +13,9 @@
 //!
 //! [![asciinema](extra/cabal-pack-opt.gif)](https://asciinema.org/a/525919)
 //!
-//! You need in your `$PATH` a working Rust and Haskell environment, if you use
-//! [Nix](https://nixos.org) you can just enter:
-//! `nix-shell -p cabal-install ghc cargo rustc`
+//! > **N.B.** You need in your `$PATH` a working Rust and Haskell environment,
+//! > if you use [Nix](https://nixos.org) you can just enter:
+//! > `nix-shell -p cabal-install ghc cargo rustc`
 //!
 //! ---
 //!
@@ -43,7 +43,7 @@
 //! ```text
 //! $ cargo add hs-bindgen
 //!     Updating crates.io index
-//!       Adding hs-bindgen v0.3.4 to dependencies.
+//!       Adding hs-bindgen v0.4.0 to dependencies.
 //! ```
 //!
 //! And use it to decorate the function we want to expose:
@@ -51,7 +51,7 @@
 //! * `src/lib.rs`:
 //!
 //! ```rust
-//! use hs_bindgen::hs_bindgen;
+//! use hs_bindgen::*;
 //!
 //! #[hs_bindgen]
 //! fn hello(name: &str) {
@@ -69,7 +69,7 @@
 //!    Compiling serde v1.0.145
 //!    Compiling semver v1.0.14
 //!    Compiling toml v0.5.9
-//!    Compiling hs-bindgen v0.3.4
+//!    Compiling hs-bindgen v0.4.0
 //!    Compiling greetings v0.1.0 (/Users/yvan/demo/greetings)
 //! error: custom attribute panicked
 //!  --> src/lib.rs:3:1
@@ -88,7 +88,7 @@
 //! ```text
 //! $ cargo install cabal-pack
 //!     Updating crates.io index
-//!      Ignored package `cabal-pack v0.3.4` is already installed, use --force to override
+//!      Ignored package `cabal-pack v0.4.0` is already installed, use --force to override
 //!
 //! $ cabal-pack
 //! Error: Your `Cargo.toml` file should contain a [lib] section with a `crate-type` field
@@ -114,7 +114,7 @@
 //! # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 //!
 //! [dependencies]
-//! hs-bindgen = "0.3.4"
+//! hs-bindgen = "0.4.0"
 //!
 //! [lib]
 //! crate-type = ["staticlib"]
@@ -134,7 +134,7 @@
 //!
 //! ```text
 //! $ cargo build
-//!    Compiling hs-bindgen v0.3.4
+//!    Compiling hs-bindgen v0.4.0
 //!    Compiling greetings v0.1.0 (/Users/yvan/demo/greetings)
 //!     Finished dev [unoptimized + debuginfo] target(s) in 0.55s
 //!
@@ -237,7 +237,7 @@
 //!
 //! > **N.B.** when first working with `hs-bindgen` and Nix flakes, checking if
 //! > `Cargo.lock` isn't in `.gitignore` and running `cargo build` and
-//! > `git add —all` before `nix build`, will save you a lot of pain 😉
+//! > `git add --all` before `nix build`, will save you a lot of pain 😉
 //!
 //! ## Acknowledgments
 //!
@@ -258,9 +258,9 @@ mod flake;
 mod hsbindgen;
 
 use ansi_term::Colour;
+use clap::Parser;
 use errors::Error;
 use std::{fs, path::Path};
-use clap::Parser;
 
 /// A tool that helps you to turn in one command a Rust crate into a Haskell Cabal library
 #[derive(Parser)]

@@ -13,7 +13,7 @@
       in {
         devShell = with pkgs;
           mkShell {
-            buildInputs = [ agg' asciinema asciinema-scenario gifsicle ];
+            buildInputs = [ agg' asciinema asciinema-scenario gifsicle ffmpeg ];
           };
       });
 }

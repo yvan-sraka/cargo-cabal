@@ -18,7 +18,6 @@
           mkShell {
             buildInputs = [
               cargo
-              libiconv
               rust-analyzer
               rustc
               rustfmt
