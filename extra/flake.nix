@@ -13,7 +13,8 @@
       in {
         devShell = with pkgs;
           mkShell {
-            buildInputs = [ agg' asciinema asciinema-scenario gifsicle ffmpeg ];
+            buildInputs =
+              [ agg' asciinema asciinema-scenario gifsicle ffmpeg fira-code ];
           };
       });
 }

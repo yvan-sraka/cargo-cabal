@@ -45,7 +45,7 @@ Add `hs-bindgen` to the dependencies list:
 ```text
 $ cargo add hs-bindgen
     Updating crates.io index
-      Adding hs-bindgen v0.4.0 to dependencies.
+      Adding hs-bindgen v0.4.1 to dependencies.
 ```
 
 And use it to decorate the function we want to expose:
@@ -71,7 +71,7 @@ $ cargo build
    Compiling serde v1.0.145
    Compiling semver v1.0.14
    Compiling toml v0.5.9
-   Compiling hs-bindgen v0.4.0
+   Compiling hs-bindgen v0.4.1
    Compiling greetings v0.1.0 (/Users/yvan/demo/greetings)
 error: custom attribute panicked
  --> src/lib.rs:3:1
@@ -90,7 +90,7 @@ So, we will use `cabal-pack` to check our setup and generate Cabal files:
 ```text
 $ cargo install cabal-pack
     Updating crates.io index
-     Ignored package `cabal-pack v0.4.0` is already installed, use --force to override
+     Ignored package `cabal-pack v0.4.1` is already installed, use --force to override
 
 $ cabal-pack
 Error: Your `Cargo.toml` file should contain a [lib] section with a `crate-type` field
@@ -115,7 +115,7 @@ edition = "2021"
 
 
 [dependencies]
-hs-bindgen = "0.4.0"
+hs-bindgen = "0.4.1"
 
 [lib]
 crate-type = ["staticlib"]
@@ -135,7 +135,7 @@ Cargo.lock  Cargo.toml  Setup.lhs  greetings.cabal  src  target
 
 ```text
 $ cargo build
-   Compiling hs-bindgen v0.4.0
+   Compiling hs-bindgen v0.4.1
    Compiling greetings v0.1.0 (/Users/yvan/demo/greetings)
     Finished dev [unoptimized + debuginfo] target(s) in 0.55s
 
