@@ -1,6 +1,8 @@
 use displaydoc::Display;
 use thiserror::Error;
 
+/// CLI errors displayed by `cabal-pack` to help end-users to set up correctly
+/// their Rust project!
 #[derive(Display, Error, Debug)]
 pub(crate) enum Error {
     /** Fail to read content of `Cargo.toml` file
@@ -16,16 +18,26 @@ pub(crate) enum Error {
     /// Your `Cargo.toml` [package] section should contain a `name` field
     NoCargoNameField,
     /** Your `Cargo.toml` file should contain a [lib] section with a `crate-type` field
-     *  that contains `staticlib` value:
+     *  that contains either `staticlib` or `cdylib` value, e.g.:
      *
      *  [lib]
      *  crate-type = ["staticlib"]
      */
-    NoCargoStaticLibTarget,
+    NoCargoLibTarget,
     /// Fail to write `{0}` file
     FailedToWriteFile(String),
-    /** `{0}.cabal`, `Setup.lhs` or `.hsbindgen` file already exist,
-     *  please back up it before re-running `cabal-pack` command
+    /** `{0}.cabal`, `.hsbindgen`, `Setup.hs` or `Setup.lhs` file already exist,
+     * please back up it before re-running `cabal-pack` command
      */
-    FileAlreadyExist(String),
+    CabalFilesExist(String),
+    /** `build.rs` file already exist, but `crates-type = [ "cdylib" ]` target
+     *  need to generate one, please either remove this option or back up it
+     *  before re-running `cabal-pack` command
+     */
+    BuildFileExist,
+    /** `flake.nix` file already exist, but `--enable-nix` option need to
+     * generate one, please either remove this CLI arg or back up it before
+     * re-running `cabal-pack` command
+     */
+    FlakeFileExist,
 }

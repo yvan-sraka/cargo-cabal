@@ -13,7 +13,7 @@ expose with [`hs-bindgen`](https://github.com/yvan-sraka/hs-bindgen) macro.
 Here a little screencast demonstrating how it works (commands walkthrough
 are just pasted below):
 
-[![asciinema](extra/cabal-pack-opt.gif)](https://asciinema.org/a/525919)
+[![asciinema](extra/cabal-pack-opt.gif)](https://asciinema.org/a/535140)
 
 > **N.B.** You need in your `$PATH` a working Rust and Haskell environment,
 > if you use [Nix](https://nixos.org) you can just enter:
@@ -45,7 +45,9 @@ Add `hs-bindgen` to the dependencies list:
 ```text
 $ cargo add hs-bindgen
     Updating crates.io index
-      Adding hs-bindgen v0.5.1 to dependencies.
+      Adding hs-bindgen v0.6.0 to dependencies.
+             Features:
+             + antlion
 ```
 
 And use it to decorate the function we want to expose:
@@ -62,16 +64,22 @@ fn hello(name: &str) {
 ```
 
 ```text
-$ cargo build
-   Compiling proc-macro2 v1.0.46
-   Compiling unicode-ident v1.0.4
+$ cargo build   Compiling proc-macro2 v1.0.47
    Compiling quote v1.0.21
-   Compiling syn v1.0.101
-   Compiling serde_derive v1.0.145
-   Compiling serde v1.0.145
+   Compiling unicode-ident v1.0.5
+   Compiling syn v1.0.103
+   Compiling serde_derive v1.0.147
+   Compiling thiserror v1.0.37
+   Compiling serde v1.0.147
    Compiling semver v1.0.14
+   Compiling antlion v0.3.0
+   Compiling lazy_static v1.4.0
+   Compiling thiserror-impl v1.0.37
+   Compiling displaydoc v0.2.3
+   Compiling hs-bindgen-traits v0.6.1
    Compiling toml v0.5.9
-   Compiling hs-bindgen v0.5.1
+   Compiling hs-bindgen-derive v0.6.1
+   Compiling hs-bindgen v0.6.1
    Compiling greetings v0.1.0 (/Users/yvan/demo/greetings)
 error: custom attribute panicked
  --> src/lib.rs:3:1
@@ -90,11 +98,11 @@ So, we will use `cabal-pack` to check our setup and generate Cabal files:
 ```text
 $ cargo install cabal-pack
     Updating crates.io index
-     Ignored package `cabal-pack v0.5.1` is already installed, use --force to override
+     Ignored package `cabal-pack v0.6.0` is already installed, use --force to override
 
 $ cabal-pack
 Error: Your `Cargo.toml` file should contain a [lib] section with a `crate-type` field
-that contains `staticlib` value:
+that contains either `staticlib` or `cdylib` value, e.g.:
 
 [lib]
 crate-type = ["staticlib"]
@@ -116,7 +124,7 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-hs-bindgen = "0.5.1"
+hs-bindgen = "0.6"
 
 [lib]
 crate-type = ["staticlib"]
@@ -136,7 +144,7 @@ Cargo.lock  Cargo.toml  Setup.lhs  greetings.cabal  src  target
 
 ```text
 $ cargo build
-   Compiling hs-bindgen v0.5.1
+   Compiling hs-bindgen v0.6.1
    Compiling greetings v0.1.0 (/Users/yvan/demo/greetings)
     Finished dev [unoptimized + debuginfo] target(s) in 0.55s
 
@@ -144,9 +152,12 @@ $ cabal build
 Build profile: -w ghc-9.0.2 -O1
 In order, the following will be built (use -v for more details):
  - greetings-0.1.0 (lib:greetings) (first run)
+[1 of 1] Compiling Main             ( omitted ... )
+Linking /Users/yvan/demo/dist-newstyle/build/aarch64-osx/ghc-9.0.2/greetings-0.1.0/setup/setup ...
+Configuring greetings-0.1.0...
 Preprocessing library for greetings-0.1.0..
 Building library for greetings-0.1.0..
-[1 of 1] Compiling Greetings        ( src/Greetings.hs, /Users/yvan/demo/greetings/dist-newstyle/build/aarch64-osx/ghc-9.0.2/greetings-0.1.0/build/Greetings.o, /Users/yvan/demo/greetings/dist-newstyle/build/aarch64-osx/ghc-9.0.2/greetings-0.1.0/build/Greetings.dyn_o )
+[1 of 1] Compiling Greetings        ( src/Greetings.hs, omitted ... )
 ```
 
 It works! And so `cargo build` too if you just want to use the library in a
@@ -210,7 +221,7 @@ import Foreign.C.String
 import Greetings
 
 main :: IO ()
-main = hello =<< newCString "Rust"
+main = withCString "Rust 🦀" hello
 ```
 
 Let's check if everything works as expected:
@@ -223,9 +234,9 @@ In order, the following will be built (use -v for more details):
 Configuring executable 'test' for test-0.1.0.0..
 Preprocessing executable 'test' for test-0.1.0.0..
 Building executable 'test' for test-0.1.0.0..
-[1 of 1] Compiling Main             ( app/Main.hs, /Users/yvan/demo/dist-newstyle/build/aarch64-osx/ghc-9.0.2/test-0.1.0.0/x/test/build/test/test-tmp/Main.o )
+[1 of 1] Compiling Main             ( app/Main.hs, omitted ... )
 Linking /Users/yvan/demo/dist-newstyle/build/aarch64-osx/ghc-9.0.2/test-0.1.0.0/x/test/build/test/test ...
-Hello, Rust!
+Hello, Rust 🦀!
 ```
 
 That's all folks! Happy hacking 🙂

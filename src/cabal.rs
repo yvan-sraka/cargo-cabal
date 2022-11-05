@@ -1,5 +1,6 @@
 use crate::Args;
 
+/// Generate user `.cabal`, taking `--enable-nix` option into account
 pub(crate) fn generate(name: &str, module: &str, version: &str, args: &Args) -> String {
     let build_type = if args.enable_nix {
         "

@@ -11,7 +11,7 @@
 //! Here a little screencast demonstrating how it works (commands walkthrough
 //! are just pasted below):
 //!
-//! [![asciinema](extra/cabal-pack-opt.gif)](https://asciinema.org/a/525919)
+//! [![asciinema](extra/cabal-pack-opt.gif)](https://asciinema.org/a/535140)
 //!
 //! > **N.B.** You need in your `$PATH` a working Rust and Haskell environment,
 //! > if you use [Nix](https://nixos.org) you can just enter:
@@ -43,7 +43,9 @@
 //! ```text
 //! $ cargo add hs-bindgen
 //!     Updating crates.io index
-//!       Adding hs-bindgen v0.5.1 to dependencies.
+//!       Adding hs-bindgen v0.6.0 to dependencies.
+//!              Features:
+//!              + antlion
 //! ```
 //!
 //! And use it to decorate the function we want to expose:
@@ -60,16 +62,22 @@
 //! ```
 //!
 //! ```text
-//! $ cargo build
-//!    Compiling proc-macro2 v1.0.46
-//!    Compiling unicode-ident v1.0.4
+//! $ cargo build   Compiling proc-macro2 v1.0.47
 //!    Compiling quote v1.0.21
-//!    Compiling syn v1.0.101
-//!    Compiling serde_derive v1.0.145
-//!    Compiling serde v1.0.145
+//!    Compiling unicode-ident v1.0.5
+//!    Compiling syn v1.0.103
+//!    Compiling serde_derive v1.0.147
+//!    Compiling thiserror v1.0.37
+//!    Compiling serde v1.0.147
 //!    Compiling semver v1.0.14
+//!    Compiling antlion v0.3.0
+//!    Compiling lazy_static v1.4.0
+//!    Compiling thiserror-impl v1.0.37
+//!    Compiling displaydoc v0.2.3
+//!    Compiling hs-bindgen-traits v0.6.1
 //!    Compiling toml v0.5.9
-//!    Compiling hs-bindgen v0.5.1
+//!    Compiling hs-bindgen-derive v0.6.1
+//!    Compiling hs-bindgen v0.6.1
 //!    Compiling greetings v0.1.0 (/Users/yvan/demo/greetings)
 //! error: custom attribute panicked
 //!  --> src/lib.rs:3:1
@@ -88,11 +96,11 @@
 //! ```text
 //! $ cargo install cabal-pack
 //!     Updating crates.io index
-//!      Ignored package `cabal-pack v0.5.1` is already installed, use --force to override
+//!      Ignored package `cabal-pack v0.6.0` is already installed, use --force to override
 //!
 //! $ cabal-pack
 //! Error: Your `Cargo.toml` file should contain a [lib] section with a `crate-type` field
-//! that contains `staticlib` value:
+//! that contains either `staticlib` or `cdylib` value, e.g.:
 //!
 //! [lib]
 //! crate-type = ["staticlib"]
@@ -114,7 +122,7 @@
 //! # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 //!
 //! [dependencies]
-//! hs-bindgen = "0.5.1"
+//! hs-bindgen = "0.6"
 //!
 //! [lib]
 //! crate-type = ["staticlib"]
@@ -134,7 +142,7 @@
 //!
 //! ```text
 //! $ cargo build
-//!    Compiling hs-bindgen v0.5.1
+//!    Compiling hs-bindgen v0.6.1
 //!    Compiling greetings v0.1.0 (/Users/yvan/demo/greetings)
 //!     Finished dev [unoptimized + debuginfo] target(s) in 0.55s
 //!
@@ -142,9 +150,12 @@
 //! Build profile: -w ghc-9.0.2 -O1
 //! In order, the following will be built (use -v for more details):
 //!  - greetings-0.1.0 (lib:greetings) (first run)
+//! [1 of 1] Compiling Main             ( omitted ... )
+//! Linking /Users/yvan/demo/dist-newstyle/build/aarch64-osx/ghc-9.0.2/greetings-0.1.0/setup/setup ...
+//! Configuring greetings-0.1.0...
 //! Preprocessing library for greetings-0.1.0..
 //! Building library for greetings-0.1.0..
-//! [1 of 1] Compiling Greetings        ( src/Greetings.hs, /Users/yvan/demo/greetings/dist-newstyle/build/aarch64-osx/ghc-9.0.2/greetings-0.1.0/build/Greetings.o, /Users/yvan/demo/greetings/dist-newstyle/build/aarch64-osx/ghc-9.0.2/greetings-0.1.0/build/Greetings.dyn_o )
+//! [1 of 1] Compiling Greetings        ( src/Greetings.hs, omitted ... )
 //! ```
 //!
 //! It works! And so `cargo build` too if you just want to use the library in a
@@ -208,7 +219,7 @@
 //! import Greetings
 //!
 //! main :: IO ()
-//! main = hello =<< newCString "Rust"
+//! main = withCString "Rust 🦀" hello
 //! ```
 //!
 //! Let's check if everything works as expected:
@@ -221,9 +232,9 @@
 //! Configuring executable 'test' for test-0.1.0.0..
 //! Preprocessing executable 'test' for test-0.1.0.0..
 //! Building executable 'test' for test-0.1.0.0..
-//! [1 of 1] Compiling Main             ( app/Main.hs, /Users/yvan/demo/dist-newstyle/build/aarch64-osx/ghc-9.0.2/test-0.1.0.0/x/test/build/test/test-tmp/Main.o )
+//! [1 of 1] Compiling Main             ( app/Main.hs, omitted ... )
 //! Linking /Users/yvan/demo/dist-newstyle/build/aarch64-osx/ghc-9.0.2/test-0.1.0.0/x/test/build/test/test ...
-//! Hello, Rust!
+//! Hello, Rust 🦀!
 //! ```
 //!
 //! That's all folks! Happy hacking 🙂
@@ -257,6 +268,7 @@ mod errors;
 mod flake;
 mod hsbindgen;
 
+use crate::cargo::{get_crate_type, CrateType};
 use ansi_term::Colour;
 use clap::Parser;
 use errors::Error;
@@ -270,6 +282,8 @@ struct Args {
     #[arg(long)]
     enable_nix: bool,
 }
+// FIXME: organize CLI into commands `pack`, `clean`, etc. and rename the
+// project `cargo-cabal`, so invocation would became `cargo cabal pack`?
 
 fn main() {
     if let Err(e) = routine() {
@@ -301,27 +315,47 @@ fn routine() -> Result<(), Error> {
         .collect::<Vec<String>>()
         .join("");
 
-    // Check that project have a `crate-type = ["staticlib"]` target ...
-    have_staticlib_target(root).ok_or(Error::NoCargoStaticLibTarget)?;
-    // FIXME: add support to dynamic library, this would require in user crate
-    // a small `build.rs` script, that append GHC version to output filename,
-    // e.g.: `libNAME-ghcVERSION.so`, `libNAME-ghcVERSION.dylib` or
-    // `NAME-ghcVERSION.dll`
+    // Check that project have a `crate-type` target ...
+    let crate_type = get_crate_type(root).ok_or(Error::NoCargoLibTarget)?;
 
     // Check that `cabal-pack` have not been already run ...
     let cabal = format!("{name}.cabal");
     (!(Path::new(&cabal).exists()
-        || Path::new("Setup.lhs").exists()
-        || Path::new(".hsbindgen").exists()))
+        || Path::new(".hsbindgen").exists()
+        || Path::new("Setup.hs").exists()
+        || Path::new("Setup.lhs").exists()))
     .then_some(())
-    .ok_or_else(|| Error::FileAlreadyExist(name.to_owned()))?;
+    .ok_or_else(|| Error::CabalFilesExist(name.to_owned()))?;
+    // ... and that no existing file would conflict ...
+    if crate_type == CrateType::DynLib {
+        (!Path::new("build.rs").exists())
+            .then_some(())
+            .ok_or(Error::BuildFileExist)?;
+    }
+    if args.enable_nix {
+        (!Path::new("flake.rs").exists())
+            .then_some(())
+            .ok_or(Error::FlakeFileExist)?;
+    }
 
-    // Generate wanted Cabal files from templates ...
+    // Generate wanted files from templates ... starting by a `.cabal` ...
     fs::write(
         cabal.clone(),
         cabal::generate(&name, &module, &version, &args),
     )
     .or(Err(Error::FailedToWriteFile(cabal)))?;
+
+    // `.hsbindgen` is a config file readed by `#[hs_bindgen]` proc macro ...
+    fs::write(".hsbindgen", hsbindgen::generate(&module))
+        .map_err(|_| Error::FailedToWriteFile(".hsbindgen".to_owned()))?;
+
+    // If `crate-type = [ "cdylib" ]` then a custom `build.rs` is needed ...
+    if crate_type == CrateType::DynLib {
+        fs::write("build.rs", include_str!("build.rs"))
+            .map_err(|_| Error::FailedToWriteFile("build.rs".to_owned()))?;
+    }
+
+    // `--enable-nix` CLI option generate a `flake.nix` rather than a `Setup.lhs`
     if args.enable_nix {
         fs::write("flake.nix", flake::generate(&name))
             .map_err(|_| Error::FailedToWriteFile("flake.nix".to_owned()))?;
@@ -329,16 +363,6 @@ fn routine() -> Result<(), Error> {
         fs::write("Setup.lhs", include_str!("Setup.lhs"))
             .map_err(|_| Error::FailedToWriteFile("Setup.lhs".to_owned()))?;
     }
-    fs::write(".hsbindgen", hsbindgen::generate(&module))
-        .map_err(|_| Error::FailedToWriteFile(".hsbindgen".to_owned()))?;
 
     Ok(())
-}
-
-fn have_staticlib_target(cargo: cargo::Root) -> Option<()> {
-    cargo
-        .lib?
-        .crate_type?
-        .contains(&"staticlib".to_owned())
-        .then_some(())
 }

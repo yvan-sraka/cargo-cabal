@@ -1,5 +1,11 @@
-const VERSION: &str = "0.5.1";
+// FIXME: rather than living in this custom file, these options could be moved
+// under an `[hs-bindgen]` manifest key directly in `Cargo.toml` (even if this
+// would trigger a `unused manifest key` warning at `cargo build`)?
 
+const VERSION: &str = "0.6.0";
+
+/// Generate content of `.hs-bindgen` file, a neat way to share config option
+/// between `hs-bindgen` and `cabal-pack`!
 pub(crate) fn generate(module: &str) -> String {
     format!(
         "# Since the only `.cabal` format parser implementation and specification live
@@ -14,6 +20,6 @@ default = \"{module}\"
 # But even in this case, it would be nice to know the `cabal-pack` version that
 # generated the `.cabal` file used.
 
-version = \"{VERSION}\""
+version = \"{VERSION}\"",
     )
 }
