@@ -260,6 +260,15 @@
 //!
 //! This project was part of a work assignment as an
 //! [IOG](https://github.com/input-output-hk) contractor.
+//!
+//! ## License
+//!
+//! Licensed under either of [Apache License](LICENSE-APACHE), Version 2.0 or
+//! [MIT license](LICENSE-MIT) at your option.
+//!
+//! Unless you explicitly state otherwise, any contribution intentionally submitted
+//! for inclusion in this project by you, as defined in the Apache-2.0 license,
+//! shall be dual licensed as above, without any additional terms or conditions.
 
 mod cabal;
 mod cargo;
@@ -290,7 +299,8 @@ fn main() {
         println!("{}{}", Colour::Red.bold().paint("Error: "), e);
     } else {
         println!(
-            "Cabal files generated!
+            "\
+Cabal files generated!
 **********************
 You should now be able to compile your library with `cabal build` and should
 add `hs-bindgen` to your crate dependencies list and decorate the Rust function

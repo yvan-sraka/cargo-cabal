@@ -1,10 +1,12 @@
 [package]
-name = "cabal-pack"
-version = "0.6.0"
-edition = "2021"
+authors = ["Yvan Sraka <yvan@sraka.xyz>"]
 description = "A tool that helps you to turn in one command a Rust crate into a Haskell Cabal library"
+edition = "2021"
+license = "MIT OR Apache-2.0"
+name = "cabal-pack"
 repository = "https://github.com/yvan-sraka/cabal-pack"
-license = "MIT"
+rust-version = "1.62.1"
+version = "0.6.1"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 

@@ -1,29 +1,33 @@
 {
   inputs = {
+    flake-utils.url = "github:numtide/flake-utils";
     naersk.url = "github:nix-community/naersk/master";
-    nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
-    utils.url = "github:numtide/flake-utils";
-    cargo-sync-readme.url = "github:yvan-sraka/cargo-sync-readme";
+    nixpkgs-mozilla = {
+      url = "github:mozilla/nixpkgs-mozilla";
+      flake = false;
+    };
   };
 
-  outputs = { self, nixpkgs, utils, naersk, cargo-sync-readme }:
-    utils.lib.eachDefaultSystem (system:
+  outputs = { self, flake-utils, naersk, nixpkgs, nixpkgs-mozilla }:
+    flake-utils.lib.eachDefaultSystem (system:
       let
-        pkgs = import nixpkgs { inherit system; };
-        naersk' = pkgs.callPackage naersk { };
-        sync-readme = cargo-sync-readme.defaultPackage.${system};
+        naersk' = pkgs.callPackage naersk {
+          cargo = toolchain;
+          rustc = toolchain;
+        };
+        pkgs = (import nixpkgs) {
+          inherit system;
+          overlays = [ (import nixpkgs-mozilla) ];
+        };
+        toolchain = (pkgs.rustChannelOf {
+          rustToolchain = ./rust-toolchain;
+          sha256 = "sha256-DzNEaW724O8/B8844tt5AVHmSjSQ3cmzlU4BP90oRlY=";
+        }).rust;
       in {
         defaultPackage = naersk'.buildPackage ./.;
         devShell = with pkgs;
           mkShell {
-            buildInputs = [
-              cargo
-              rust-analyzer
-              rustc
-              rustfmt
-              rustPackages.clippy
-              sync-readme
-            ];
+            buildInputs = [ libiconv toolchain ];
             RUST_SRC_PATH = rustPlatform.rustLibSrc;
           };
       });
