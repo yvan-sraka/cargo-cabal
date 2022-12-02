@@ -357,7 +357,7 @@ fn routine() -> Result<(), Error> {
 
     // `.hsbindgen` is a config file readed by `#[hs_bindgen]` proc macro ...
     fs::write(".hsbindgen", hsbindgen::generate(&module))
-        .map_err(|_| Error::FailedToWriteFile(".hsbindgen".to_owned()))?;
+        .or(Err(Error::FailedToWriteFile(".hsbindgen".to_owned())))?;
 
     // If `crate-type = [ "cdylib" ]` then a custom `build.rs` is needed ...
     if crate_type == CrateType::DynLib {

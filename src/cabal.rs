@@ -2,6 +2,9 @@ use crate::Args;
 
 /// Generate user `.cabal`, taking `--enable-nix` option into account
 pub(crate) fn generate(name: &str, module: &str, version: &str, args: &Args) -> String {
+    let lib_name = name.replace("-", "_"); // When a lib is created, "-" is replaced by "_"
+    let package_name = name.replace("_", "-"); // cabal does not expect "_" for packages names
+
     let build_type = if args.enable_nix {
         "
 build-type:         Simple"
@@ -19,7 +22,7 @@ custom-setup
     -- `haskell.nix` tell GHC linker where to find the `libNAME.a` by setting
     -- automatically `extra-lib-dirs`:
     -- https://input-output-hk.github.io/haskell.nix/tutorials/pkg-map.html
-    extra-libraries:  {name}
+    extra-libraries:  {lib_name}
 
     -- Cross-compilation to target `x86_64-w64-mingw32-cc` thrown a lot of
     -- `undefined reference to 'X'` errors during linking stage ...
@@ -34,7 +37,7 @@ custom-setup
         format!(
             "
     -- Libraries that are bundled with the package.
-    extra-bundled-libraries: {name}"
+    extra-bundled-libraries: {lib_name}"
         )
     };
 
@@ -51,7 +54,7 @@ custom-setup
 -- documentation, see: http://haskell.org/cabal/users-guide/
 --
 -- The name of the package.
-name:               {name}
+name:               {package_name}
 
 -- The package version.
 -- See the Haskell package versioning policy (PVP) for standards
