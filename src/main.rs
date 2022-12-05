@@ -1,4 +1,4 @@
-//! # `cabal-pack`
+//! # `cargo-cabal`
 //!
 //! A tool that helps you to turn in one command a Rust crate into a Haskell
 //! Cabal library!
@@ -11,7 +11,7 @@
 //! Here a little screencast demonstrating how it works (commands walkthrough
 //! are just pasted below):
 //!
-//! [![asciinema](extra/cabal-pack-opt.gif)](https://asciinema.org/a/535140)
+//! ![asciinema](extra/cargo-cabal-opt.gif)
 //!
 //! > **N.B.** You need in your `$PATH` a working Rust and Haskell environment,
 //! > if you use [Nix](https://nixos.org) you can just enter:
@@ -19,7 +19,7 @@
 //!
 //! ---
 //!
-//! Welcome in this little `cabal-pack` / `hs-bindgen` demo 🙂
+//! Welcome in this little `cargo-cabal` / `hs-bindgen` demo 🙂
 //!
 //! Let's start by creating a dumb Rust library!
 //!
@@ -41,11 +41,13 @@
 //! Add `hs-bindgen` to the dependencies list:
 //!
 //! ```text
-//! $ cargo add hs-bindgen
+//! $ cargo add hs-bindgen --features full
 //!     Updating crates.io index
-//!       Adding hs-bindgen v0.6.0 to dependencies.
+//!       Adding hs-bindgen v0.7.1 to dependencies.
 //!              Features:
 //!              + antlion
+//!              + full
+//!              + std
 //! ```
 //!
 //! And use it to decorate the function we want to expose:
@@ -62,22 +64,27 @@
 //! ```
 //!
 //! ```text
-//! $ cargo build   Compiling proc-macro2 v1.0.47
+//! $ cargo build
+//!    Compiling proc-macro2 v1.0.47
 //!    Compiling quote v1.0.21
 //!    Compiling unicode-ident v1.0.5
-//!    Compiling syn v1.0.103
-//!    Compiling serde_derive v1.0.147
+//!    Compiling syn v1.0.105
+//!    Compiling serde_derive v1.0.149
+//!    Compiling semver-parser v0.7.0
+//!    Compiling serde v1.0.149
 //!    Compiling thiserror v1.0.37
-//!    Compiling serde v1.0.147
+//!    Compiling antlion v0.3.1
+//!    Compiling semver v0.9.0
 //!    Compiling semver v1.0.14
-//!    Compiling antlion v0.3.0
 //!    Compiling lazy_static v1.4.0
+//!    Compiling hs-bindgen-traits v0.7.1
+//!    Compiling rustc_version v0.2.3
+//!    Compiling hs-bindgen-attribute v0.7.2
 //!    Compiling thiserror-impl v1.0.37
 //!    Compiling displaydoc v0.2.3
-//!    Compiling hs-bindgen-traits v0.6.1
+//!    Compiling hs-bindgen-types v0.7.1
 //!    Compiling toml v0.5.9
-//!    Compiling hs-bindgen-derive v0.6.1
-//!    Compiling hs-bindgen v0.6.1
+//!    Compiling hs-bindgen v0.7.1
 //!    Compiling greetings v0.1.0 (/Users/yvan/demo/greetings)
 //! error: custom attribute panicked
 //!  --> src/lib.rs:3:1
@@ -85,20 +92,20 @@
 //! 3 | #[hs_bindgen]
 //!   | ^^^^^^^^^^^^^
 //!   |
-//!   = help: message: fail to read content of `.hsbindgen` configuration file
-//!           n.b. you have to run the command `cabal-pack` to generate it: Os { code: 2, kind: NotFound, message: "No such file or directory" }
+//!   = help: message: fail to read content of `hsbindgen.toml` configuration file
+//!           n.b. you have to run the command `cargo-cabal` to generate it: Os { code: 2, kind: NotFound, message: "No such file or directory" }
 //!
 //! error: could not compile `greetings` due to previous error
 //! ```
 //!
-//! So, we will use `cabal-pack` to check our setup and generate Cabal files:
+//! So, we will use `cargo-cabal` to check our setup and generate Cabal files:
 //!
 //! ```text
-//! $ cargo install cabal-pack
+//! $ cargo install cargo-cabal
 //!     Updating crates.io index
-//!      Ignored package `cabal-pack v0.6.0` is already installed, use --force to override
+//!      Ignored package `cargo-cabal v0.7.0` is already installed, use --force to override
 //!
-//! $ cabal-pack
+//! $ cargo cabal init
 //! Error: Your `Cargo.toml` file should contain a [lib] section with a `crate-type` field
 //! that contains either `staticlib` or `cdylib` value, e.g.:
 //!
@@ -106,8 +113,8 @@
 //! crate-type = ["staticlib"]
 //! ```
 //!
-//! > **N.B.** if you're a Nix user, rather than rely on impure `cargo install`
-//! > fell free to just `nix run github:yvan-sraka/cabal-pack`
+//! > **N.B.** if you're a Nix user, rather than rely on impure `cargo install`,
+//! > feel free to just `nix run github:yvan-sraka/cargo-cabal -- cabal init`
 //!
 //! Right, we edit the `Cargo.toml` accordingly:
 //!
@@ -122,14 +129,14 @@
 //! # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 //!
 //! [dependencies]
-//! hs-bindgen = "0.6"
+//! hs-bindgen = { version = "0.7.1", features = ["full"] }
 //!
 //! [lib]
 //! crate-type = ["staticlib"]
 //! ```
 //!
 //! ```text
-//! $ cabal-pack
+//! $ cargo cabal init
 //! Cabal files generated!
 //! **********************
 //! You should now be able to compile your library with `cabal build` and should
@@ -142,9 +149,8 @@
 //!
 //! ```text
 //! $ cargo build
-//!    Compiling hs-bindgen v0.6.1
 //!    Compiling greetings v0.1.0 (/Users/yvan/demo/greetings)
-//!     Finished dev [unoptimized + debuginfo] target(s) in 0.55s
+//!     Finished dev [unoptimized + debuginfo] target(s) in 1.06s
 //!
 //! $ cabal build
 //! Build profile: -w ghc-9.0.2 -O1
@@ -241,7 +247,7 @@
 //!
 //! ## Nix support
 //!
-//! The `--enable-nix` CLI arg makes `cabal-pack` generate a
+//! The `--enable-nix` CLI arg makes `cargo-cabal` generate a
 //! [haskell.nix](https://github.com/input-output-hk/haskell.nix) /
 //! [naersk](https://github.com/nix-community/naersk) based `flake.nix` rather
 //! than the `Setup.lhs`.
@@ -254,7 +260,7 @@
 //!
 //! ⚠️ This is still a working experiment, not yet production ready.
 //!
-//! `cabal-pack` was heavily inspired by other interoperability initiatives, as
+//! `cargo-cabal` was heavily inspired by other interoperability initiatives, as
 //! [`wasm-pack`](https://github.com/rustwasm/wasm-pack) and
 //! [`Maturin`](https://github.com/PyO3/maturin).
 //!
@@ -270,6 +276,8 @@
 //! for inclusion in this project by you, as defined in the Apache-2.0 license,
 //! shall be dual licensed as above, without any additional terms or conditions.
 
+#![forbid(unsafe_code)]
+
 mod cabal;
 mod cargo;
 #[macro_use]
@@ -279,7 +287,7 @@ mod hsbindgen;
 
 use crate::cargo::{get_crate_type, CrateType};
 use ansi_term::Colour;
-use clap::Parser;
+use clap::{arg, Parser, Subcommand};
 use errors::Error;
 use std::{fs, path::Path};
 
@@ -287,12 +295,30 @@ use std::{fs, path::Path};
 #[derive(Parser)]
 #[command(version)]
 struct Args {
-    /// generate a haskell.nix / naersk based flake.nix
-    #[arg(long)]
-    enable_nix: bool,
+    #[command(subcommand)]
+    cabal: Wrapper,
 }
-// FIXME: organize CLI into commands `pack`, `clean`, etc. and rename the
-// project `cargo-cabal`, so invocation would became `cargo cabal pack`?
+
+#[derive(Subcommand)]
+enum Wrapper {
+    #[command(subcommand)]
+    Cabal(Commands),
+}
+
+#[derive(Subcommand)]
+enum Commands {
+    /// Initilize the ploject by generating custom Cabal files
+    Init {
+        /// Generate a haskell.nix / naersk based flake.nix
+        #[arg(long)]
+        enable_nix: bool,
+        /// Run a clean before generating files
+        #[arg(long)]
+        overwrite: bool,
+    },
+    /// Remove files generated by cargo-cabal, except flake.nix
+    Clean,
+}
 
 fn main() {
     if let Err(e) = routine() {
@@ -310,9 +336,6 @@ you want to expose with `#[hs_bindgen]` attribute macro."
 }
 
 fn routine() -> Result<(), Error> {
-    // Parse `cabal-pack` CLI arguments
-    let args = Args::parse();
-
     // Parse Cargo.toml file content ...
     let cargo = fs::read_to_string("Cargo.toml").or(Err(Error::NoCargoToml))?;
     let root: cargo::Root = toml::from_str(&cargo).or(Err(Error::WrongCargoToml))?;
@@ -325,13 +348,39 @@ fn routine() -> Result<(), Error> {
         .collect::<Vec<String>>()
         .join("");
 
+    // Parse `cargo-cabal` CLI arguments
+    match Args::parse().cabal {
+        Wrapper::Cabal(command) => match command {
+            Commands::Init {
+                enable_nix,
+                overwrite,
+            } => init(root, &version, &name, &module, enable_nix, overwrite),
+            Commands::Clean => clean(&name),
+        },
+    }
+}
+
+fn init(
+    root: cargo::Root,
+    version: &str,
+    name: &str,
+    module: &str,
+    enable_nix: bool,
+    overwrite: bool,
+) -> Result<(), Error> {
+    // `cargo cabal init --overwrite` == `cargo cabal clean && cargo cabal init`
+    if overwrite {
+        clean(name)?;
+    }
+
     // Check that project have a `crate-type` target ...
     let crate_type = get_crate_type(root).ok_or(Error::NoCargoLibTarget)?;
 
-    // Check that `cabal-pack` have not been already run ...
+    // Check that `cargo cabal init` have not been already run ...
     let cabal = format!("{name}.cabal");
     (!(Path::new(&cabal).exists()
         || Path::new(".hsbindgen").exists()
+        || Path::new("hsbindgen.toml").exists()
         || Path::new("Setup.hs").exists()
         || Path::new("Setup.lhs").exists()))
     .then_some(())
@@ -342,7 +391,7 @@ fn routine() -> Result<(), Error> {
             .then_some(())
             .ok_or(Error::BuildFileExist)?;
     }
-    if args.enable_nix {
+    if enable_nix {
         (!Path::new("flake.rs").exists())
             .then_some(())
             .ok_or(Error::FlakeFileExist)?;
@@ -351,13 +400,13 @@ fn routine() -> Result<(), Error> {
     // Generate wanted files from templates ... starting by a `.cabal` ...
     fs::write(
         cabal.clone(),
-        cabal::generate(&name, &module, &version, &args),
+        cabal::generate(name, module, version, enable_nix),
     )
     .or(Err(Error::FailedToWriteFile(cabal)))?;
 
-    // `.hsbindgen` is a config file readed by `#[hs_bindgen]` proc macro ...
-    fs::write(".hsbindgen", hsbindgen::generate(&module))
-        .map_err(|_| Error::FailedToWriteFile(".hsbindgen".to_owned()))?;
+    // `hsbindgen.toml` is a config file readed by `#[hs_bindgen]` proc macro ...
+    fs::write("hsbindgen.toml", hsbindgen::generate(module))
+        .map_err(|_| Error::FailedToWriteFile("hsbindgen.toml".to_owned()))?;
 
     // If `crate-type = [ "cdylib" ]` then a custom `build.rs` is needed ...
     if crate_type == CrateType::DynLib {
@@ -366,13 +415,23 @@ fn routine() -> Result<(), Error> {
     }
 
     // `--enable-nix` CLI option generate a `flake.nix` rather than a `Setup.lhs`
-    if args.enable_nix {
-        fs::write("flake.nix", flake::generate(&name))
+    if enable_nix {
+        fs::write("flake.nix", flake::generate(name))
             .map_err(|_| Error::FailedToWriteFile("flake.nix".to_owned()))?;
     } else {
         fs::write("Setup.lhs", include_str!("Setup.lhs"))
             .map_err(|_| Error::FailedToWriteFile("Setup.lhs".to_owned()))?;
     }
 
+    Ok(())
+}
+
+fn clean(name: &str) -> Result<(), Error> {
+    let cabal = format!("{name}.cabal");
+    let _ = fs::remove_file(&cabal);
+    let _ = fs::remove_file(".hsbindgen");
+    let _ = fs::remove_file("hsbindgen.toml");
+    let _ = fs::remove_file("Setup.hs");
+    let _ = fs::remove_file("Setup.lhs");
     Ok(())
 }

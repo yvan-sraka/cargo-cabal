@@ -1,6 +1,6 @@
 <!-- cargo-sync-readme start -->
 
-# `cabal-pack`
+# `cargo-cabal`
 
 A tool that helps you to turn in one command a Rust crate into a Haskell
 Cabal library!
@@ -13,7 +13,7 @@ expose with [`hs-bindgen`](https://github.com/yvan-sraka/hs-bindgen) macro.
 Here a little screencast demonstrating how it works (commands walkthrough
 are just pasted below):
 
-[![asciinema](extra/cabal-pack-opt.gif)](https://asciinema.org/a/535140)
+![asciinema](extra/cargo-cabal-opt.gif)
 
 > **N.B.** You need in your `$PATH` a working Rust and Haskell environment,
 > if you use [Nix](https://nixos.org) you can just enter:
@@ -21,7 +21,7 @@ are just pasted below):
 
 ---
 
-Welcome in this little `cabal-pack` / `hs-bindgen` demo 🙂
+Welcome in this little `cargo-cabal` / `hs-bindgen` demo 🙂
 
 Let's start by creating a dumb Rust library!
 
@@ -43,11 +43,13 @@ $ cd greetings
 Add `hs-bindgen` to the dependencies list:
 
 ```text
-$ cargo add hs-bindgen
+$ cargo add hs-bindgen --features full
     Updating crates.io index
-      Adding hs-bindgen v0.6.0 to dependencies.
+      Adding hs-bindgen v0.7.1 to dependencies.
              Features:
              + antlion
+             + full
+             + std
 ```
 
 And use it to decorate the function we want to expose:
@@ -64,22 +66,27 @@ fn hello(name: &str) {
 ```
 
 ```text
-$ cargo build   Compiling proc-macro2 v1.0.47
+$ cargo build
+   Compiling proc-macro2 v1.0.47
    Compiling quote v1.0.21
    Compiling unicode-ident v1.0.5
-   Compiling syn v1.0.103
-   Compiling serde_derive v1.0.147
+   Compiling syn v1.0.105
+   Compiling serde_derive v1.0.149
+   Compiling semver-parser v0.7.0
+   Compiling serde v1.0.149
    Compiling thiserror v1.0.37
-   Compiling serde v1.0.147
+   Compiling antlion v0.3.1
+   Compiling semver v0.9.0
    Compiling semver v1.0.14
-   Compiling antlion v0.3.0
    Compiling lazy_static v1.4.0
+   Compiling hs-bindgen-traits v0.7.1
+   Compiling rustc_version v0.2.3
+   Compiling hs-bindgen-attribute v0.7.2
    Compiling thiserror-impl v1.0.37
    Compiling displaydoc v0.2.3
-   Compiling hs-bindgen-traits v0.6.1
+   Compiling hs-bindgen-types v0.7.1
    Compiling toml v0.5.9
-   Compiling hs-bindgen-derive v0.6.1
-   Compiling hs-bindgen v0.6.1
+   Compiling hs-bindgen v0.7.1
    Compiling greetings v0.1.0 (/Users/yvan/demo/greetings)
 error: custom attribute panicked
  --> src/lib.rs:3:1
@@ -87,20 +94,20 @@ error: custom attribute panicked
 3 | #[hs_bindgen]
   | ^^^^^^^^^^^^^
   |
-  = help: message: fail to read content of `.hsbindgen` configuration file
-          n.b. you have to run the command `cabal-pack` to generate it: Os { code: 2, kind: NotFound, message: "No such file or directory" }
+  = help: message: fail to read content of `hsbindgen.toml` configuration file
+          n.b. you have to run the command `cargo-cabal` to generate it: Os { code: 2, kind: NotFound, message: "No such file or directory" }
 
 error: could not compile `greetings` due to previous error
 ```
 
-So, we will use `cabal-pack` to check our setup and generate Cabal files:
+So, we will use `cargo-cabal` to check our setup and generate Cabal files:
 
 ```text
-$ cargo install cabal-pack
+$ cargo install cargo-cabal
     Updating crates.io index
-     Ignored package `cabal-pack v0.6.0` is already installed, use --force to override
+     Ignored package `cargo-cabal v0.7.0` is already installed, use --force to override
 
-$ cabal-pack
+$ cargo cabal init
 Error: Your `Cargo.toml` file should contain a [lib] section with a `crate-type` field
 that contains either `staticlib` or `cdylib` value, e.g.:
 
@@ -108,8 +115,8 @@ that contains either `staticlib` or `cdylib` value, e.g.:
 crate-type = ["staticlib"]
 ```
 
-> **N.B.** if you're a Nix user, rather than rely on impure `cargo install`
-> fell free to just `nix run github:yvan-sraka/cabal-pack`
+> **N.B.** if you're a Nix user, rather than rely on impure `cargo install`,
+> feel free to just `nix run github:yvan-sraka/cargo-cabal -- cabal init`
 
 Right, we edit the `Cargo.toml` accordingly:
 
@@ -124,14 +131,14 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-hs-bindgen = "0.6"
+hs-bindgen = { version = "0.7.1", features = ["full"] }
 
 [lib]
 crate-type = ["staticlib"]
 ```
 
 ```text
-$ cabal-pack
+$ cargo cabal init
 Cabal files generated!
 **********************
 You should now be able to compile your library with `cabal build` and should
@@ -144,9 +151,8 @@ Cargo.lock  Cargo.toml  Setup.lhs  greetings.cabal  src  target
 
 ```text
 $ cargo build
-   Compiling hs-bindgen v0.6.1
    Compiling greetings v0.1.0 (/Users/yvan/demo/greetings)
-    Finished dev [unoptimized + debuginfo] target(s) in 0.55s
+    Finished dev [unoptimized + debuginfo] target(s) in 1.06s
 
 $ cabal build
 Build profile: -w ghc-9.0.2 -O1
@@ -243,7 +249,7 @@ That's all folks! Happy hacking 🙂
 
 ## Nix support
 
-The `--enable-nix` CLI arg makes `cabal-pack` generate a
+The `--enable-nix` CLI arg makes `cargo-cabal` generate a
 [haskell.nix](https://github.com/input-output-hk/haskell.nix) /
 [naersk](https://github.com/nix-community/naersk) based `flake.nix` rather
 than the `Setup.lhs`.
@@ -256,7 +262,7 @@ than the `Setup.lhs`.
 
 ⚠️ This is still a working experiment, not yet production ready.
 
-`cabal-pack` was heavily inspired by other interoperability initiatives, as
+`cargo-cabal` was heavily inspired by other interoperability initiatives, as
 [`wasm-pack`](https://github.com/rustwasm/wasm-pack) and
 [`Maturin`](https://github.com/PyO3/maturin).
 

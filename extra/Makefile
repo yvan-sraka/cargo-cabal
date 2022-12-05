@@ -1,13 +1,13 @@
-all: cabal-pack-opt.gif
+all: cargo-cabal-opt.gif
 
-cabal-pack-opt.gif: cabal-pack.gif
-	gifsicle --lossy=80 -k 128 -O2 -Okeep-empty cabal-pack.gif -o cabal-pack-opt.gif
+cargo-cabal-opt.gif: cargo-cabal.gif
+	gifsicle --lossy=80 -k 128 -O2 -Okeep-empty cargo-cabal.gif -o cargo-cabal-opt.gif
 
-cabal-pack.gif: cabal-pack.cast
-	agg --theme asciinema cabal-pack.cast cabal-pack.gif --font-family="Fira Code"
+cargo-cabal.gif: cargo-cabal.cast
+	agg --theme asciinema cargo-cabal.cast cargo-cabal.gif --font-family="Fira Code"
 
-cabal-pack.cast: cabal-pack.scenario
-	asciinema-scenario cabal-pack.scenario > cabal-pack.cast
+cargo-cabal.cast: cargo-cabal.scenario
+	asciinema-scenario cargo-cabal.scenario > cargo-cabal.cast
 
 clean:
-	rm cabal-pack-opt.gif cabal-pack.gif cabal-pack.cast
+	rm cargo-cabal-opt.gif cargo-cabal.gif cargo-cabal.cast

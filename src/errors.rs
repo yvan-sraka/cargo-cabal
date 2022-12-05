@@ -1,7 +1,7 @@
 use displaydoc::Display;
 use thiserror::Error;
 
-/// CLI errors displayed by `cabal-pack` to help end-users to set up correctly
+/// CLI errors displayed by `cargo-cabal` to help end-users to set up correctly
 /// their Rust project!
 #[derive(Display, Error, Debug)]
 pub(crate) enum Error {
@@ -12,7 +12,7 @@ pub(crate) enum Error {
     /// Fail to parse TOML content of `Cargo.toml` file
     WrongCargoToml,
     /** Your `Cargo.toml` file should contain a [package] section
-     *  n.b. Cargo Workspace aren't currently supported by `cabal-pack`
+     *  n.b. Cargo Workspace aren't currently supported by `cargo-cabal`
      */
     NotCargoPackage,
     /// Your `Cargo.toml` [package] section should contain a `name` field
@@ -26,18 +26,18 @@ pub(crate) enum Error {
     NoCargoLibTarget,
     /// Fail to write `{0}` file
     FailedToWriteFile(String),
-    /** `{0}.cabal`, `.hsbindgen`, `Setup.hs` or `Setup.lhs` file already exist,
-     * please back up it before re-running `cabal-pack` command
+    /** `{0}.cabal`, `hsbindgen.toml`, `Setup.hs` or `Setup.lhs` file already exist,
+     * please back up it before re-running `cargo cabal init --overwrite` command
      */
     CabalFilesExist(String),
     /** `build.rs` file already exist, but `crates-type = [ "cdylib" ]` target
      *  need to generate one, please either remove this option or back up it
-     *  before re-running `cabal-pack` command
+     *  before re-running `cargo cabal init --overwrite` command
      */
     BuildFileExist,
     /** `flake.nix` file already exist, but `--enable-nix` option need to
      * generate one, please either remove this CLI arg or back up it before
-     * re-running `cabal-pack` command
+     * re-running `cargo cabal init --overwrite` command
      */
     FlakeFileExist,
 }
