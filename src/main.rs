@@ -373,6 +373,12 @@ fn init(
         clean(name)?;
     }
 
+    // Check that crate name is prefixed by `C` ...
+    // https://gitlab.haskell.org/ghc/ghc/-/issues/22564#note_469030
+    name.starts_with('C')
+        .then_some(())
+        .ok_or_else(|| Error::InvalidCrateName(name.to_owned()))?;
+
     // Check that project have a `crate-type` target ...
     let crate_type = get_crate_type(root).ok_or(Error::NoCargoLibTarget)?;
 
