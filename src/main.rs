@@ -285,7 +285,7 @@ mod errors;
 mod flake;
 mod hsbindgen;
 
-use crate::cargo::{get_crate_type, CrateType};
+use crate::cargo::{get_crate_type};
 use ansi_term::Colour;
 use clap::{arg, Parser, Subcommand};
 use errors::Error;
@@ -373,14 +373,8 @@ fn init(
         clean(name)?;
     }
 
-    // Check that crate name is prefixed by `C` ...
-    // https://gitlab.haskell.org/ghc/ghc/-/issues/22564#note_469030
-    name.starts_with('C')
-        .then_some(())
-        .ok_or_else(|| Error::InvalidCrateName(name.to_owned()))?;
-
     // Check that project have a `crate-type` target ...
-    let crate_type = get_crate_type(root).ok_or(Error::NoCargoLibTarget)?;
+    get_crate_type(root).ok_or(Error::NoCargoLibTarget)?;
 
     // Check that `cargo cabal init` have not been already run ...
     let cabal = format!("{name}.cabal");
@@ -392,11 +386,9 @@ fn init(
     .then_some(())
     .ok_or_else(|| Error::CabalFilesExist(name.to_owned()))?;
     // ... and that no existing file would conflict ...
-    if crate_type == CrateType::DynLib {
-        (!Path::new("build.rs").exists())
-            .then_some(())
-            .ok_or(Error::BuildFileExist)?;
-    }
+    (!Path::new("build.rs").exists())
+        .then_some(())
+        .ok_or(Error::BuildFileExist)?;
     if enable_nix {
         (!Path::new("flake.rs").exists())
             .then_some(())
@@ -414,11 +406,9 @@ fn init(
     fs::write("hsbindgen.toml", hsbindgen::generate(module))
         .map_err(|_| Error::FailedToWriteFile("hsbindgen.toml".to_owned()))?;
 
-    // If `crate-type = [ "cdylib" ]` then a custom `build.rs` is needed ...
-    if crate_type == CrateType::DynLib {
-        fs::write("build.rs", include_str!("build.rs"))
-            .map_err(|_| Error::FailedToWriteFile("build.rs".to_owned()))?;
-    }
+    // A custom `build.rs` is needed by both static and dynamic libraries targets ...
+    fs::write("build.rs", include_str!("build.rs"))
+        .map_err(|_| Error::FailedToWriteFile("build.rs".to_owned()))?;
 
     // `--enable-nix` CLI option generate a `flake.nix` rather than a `Setup.lhs`
     if enable_nix {

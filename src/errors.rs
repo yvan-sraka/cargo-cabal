@@ -30,9 +30,8 @@ pub(crate) enum Error {
      * please back up it before re-running `cargo cabal init --overwrite` command
      */
     CabalFilesExist(String),
-    /** `build.rs` file already exist, but `crates-type = [ "cdylib" ]` target
-     *  need to generate one, please either remove this option or back up it
-     *  before re-running `cargo cabal init --overwrite` command
+    /** `build.rs` file already exist, but `cargo-cabal` need to generate one,
+     *  please back up it before re-running `cargo cabal init --overwrite` command
      */
     BuildFileExist,
     /** `flake.nix` file already exist, but `--enable-nix` option need to
@@ -40,6 +39,4 @@ pub(crate) enum Error {
      * re-running `cargo cabal init --overwrite` command
      */
     FlakeFileExist,
-    /// `{0}` is an invalid crate name, it should be prefixed by `C` like `C{0}`
-    InvalidCrateName(String)
 }
