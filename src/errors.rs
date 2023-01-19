@@ -40,6 +40,4 @@ pub(crate) enum Error {
      * re-running `cargo cabal init --overwrite` command
      */
     FlakeFileExist,
-    /// `{0}` is an invalid crate name, it should be prefixed by `C` like `C{0}`
-    InvalidCrateName(String)
 }

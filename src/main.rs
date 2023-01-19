@@ -43,7 +43,7 @@
 //! ```text
 //! $ cargo add hs-bindgen --features full
 //!     Updating crates.io index
-//!       Adding hs-bindgen v0.7.1 to dependencies.
+//!       Adding hs-bindgen v0.8.0 to dependencies.
 //!              Features:
 //!              + antlion
 //!              + full
@@ -77,14 +77,14 @@
 //!    Compiling semver v0.9.0
 //!    Compiling semver v1.0.14
 //!    Compiling lazy_static v1.4.0
-//!    Compiling hs-bindgen-traits v0.7.1
+//!    Compiling hs-bindgen-traits v0.8.0
 //!    Compiling rustc_version v0.2.3
 //!    Compiling hs-bindgen-attribute v0.7.2
 //!    Compiling thiserror-impl v1.0.37
 //!    Compiling displaydoc v0.2.3
-//!    Compiling hs-bindgen-types v0.7.1
+//!    Compiling hs-bindgen-types v0.8.0
 //!    Compiling toml v0.5.9
-//!    Compiling hs-bindgen v0.7.1
+//!    Compiling hs-bindgen v0.8.0
 //!    Compiling greetings v0.1.0 (/Users/yvan/demo/greetings)
 //! error: custom attribute panicked
 //!  --> src/lib.rs:3:1
@@ -129,7 +129,7 @@
 //! # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 //!
 //! [dependencies]
-//! hs-bindgen = { version = "0.7.1", features = ["full"] }
+//! hs-bindgen = { version = "0.8.0", features = ["full"] }
 //!
 //! [lib]
 //! crate-type = ["staticlib"]
@@ -323,15 +323,6 @@ enum Commands {
 fn main() {
     if let Err(e) = routine() {
         println!("{}{}", Colour::Red.bold().paint("Error: "), e);
-    } else {
-        println!(
-            "\
-Cabal files generated!
-**********************
-You should now be able to compile your library with `cabal build` and should
-add `hs-bindgen` to your crate dependencies list and decorate the Rust function
-you want to expose with `#[hs_bindgen]` attribute macro."
-        );
     }
 }
 
@@ -372,12 +363,6 @@ fn init(
     if overwrite {
         clean(name)?;
     }
-
-    // Check that crate name is prefixed by `C` ...
-    // https://gitlab.haskell.org/ghc/ghc/-/issues/22564#note_469030
-    name.starts_with('C')
-        .then_some(())
-        .ok_or_else(|| Error::InvalidCrateName(name.to_owned()))?;
 
     // Check that project have a `crate-type` target ...
     let crate_type = get_crate_type(root).ok_or(Error::NoCargoLibTarget)?;
@@ -429,12 +414,20 @@ fn init(
             .map_err(|_| Error::FailedToWriteFile("Setup.lhs".to_owned()))?;
     }
 
+    println!(
+        "\
+Cabal files generated!
+**********************
+You should now be able to compile your library with `cabal build` and should
+add `hs-bindgen` to your crate dependencies list and decorate the Rust function
+you want to expose with `#[hs_bindgen]` attribute macro."
+    );
+
     Ok(())
 }
 
 fn clean(name: &str) -> Result<(), Error> {
-    let cabal = format!("{name}.cabal");
-    let _ = fs::remove_file(&cabal);
+    let _ = fs::remove_file(format!("{name}.cabal"));
     let _ = fs::remove_file(".hsbindgen");
     let _ = fs::remove_file("hsbindgen.toml");
     let _ = fs::remove_file("Setup.hs");

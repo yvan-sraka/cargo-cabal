@@ -20,6 +20,11 @@ pub(crate) struct Lib {
     pub(crate) crate_type: Option<Vec<String>>,
 }
 
+/// We allow `staticlib` and `cdylib` target only since `dylib` doesn't offer
+/// the same ABI stability guarantees:
+///
+/// - https://users.rust-lang.org/t/what-is-the-difference-between-dylib-and-cdylib/28847
+/// - https://users.rust-lang.org/t/abi-stability-guarantee-of-dylib-vs-cdylib/50879
 #[derive(Debug, PartialEq)]
 pub(crate) enum CrateType {
     /// `staticlib` target, which is what you want (really)

@@ -2,7 +2,7 @@
 // under an `[hs-bindgen]` manifest key directly in `Cargo.toml` (even if this
 // would trigger a `unused manifest key` warning at `cargo build`)?
 
-const VERSION: &str = "0.7.1";
+const VERSION: &str = "0.8.0";
 
 /// Generate content of `hsbindgen.toml` file, a neat way to share config option
 /// between `hs-bindgen` and `cargo-cabal`!

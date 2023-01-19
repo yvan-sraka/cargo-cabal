@@ -45,7 +45,7 @@ Add `hs-bindgen` to the dependencies list:
 ```text
 $ cargo add hs-bindgen --features full
     Updating crates.io index
-      Adding hs-bindgen v0.7.1 to dependencies.
+      Adding hs-bindgen v0.8.0 to dependencies.
              Features:
              + antlion
              + full
@@ -79,14 +79,14 @@ $ cargo build
    Compiling semver v0.9.0
    Compiling semver v1.0.14
    Compiling lazy_static v1.4.0
-   Compiling hs-bindgen-traits v0.7.1
+   Compiling hs-bindgen-traits v0.8.0
    Compiling rustc_version v0.2.3
    Compiling hs-bindgen-attribute v0.7.2
    Compiling thiserror-impl v1.0.37
    Compiling displaydoc v0.2.3
-   Compiling hs-bindgen-types v0.7.1
+   Compiling hs-bindgen-types v0.8.0
    Compiling toml v0.5.9
-   Compiling hs-bindgen v0.7.1
+   Compiling hs-bindgen v0.8.0
    Compiling greetings v0.1.0 (/Users/yvan/demo/greetings)
 error: custom attribute panicked
  --> src/lib.rs:3:1
@@ -131,7 +131,7 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-hs-bindgen = { version = "0.7.1", features = ["full"] }
+hs-bindgen = { version = "0.8.0", features = ["full"] }
 
 [lib]
 crate-type = ["staticlib"]

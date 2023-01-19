@@ -1,34 +1,17 @@
 {
   inputs = {
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    rust-overlay.url = "github:oxalica/rust-overlay";
     flake-utils.url = "github:numtide/flake-utils";
-    naersk.url = "github:nix-community/naersk/master";
-    nixpkgs-mozilla = {
-      url = "github:mozilla/nixpkgs-mozilla";
-      flake = false;
-    };
   };
-
-  outputs = { self, flake-utils, naersk, nixpkgs, nixpkgs-mozilla }:
+  outputs = { self, nixpkgs, rust-overlay, flake-utils, ... }:
     flake-utils.lib.eachDefaultSystem (system:
       let
-        naersk' = pkgs.callPackage naersk {
-          cargo = toolchain;
-          rustc = toolchain;
+        overlays = [ (import rust-overlay) ];
+        pkgs = import nixpkgs { inherit system overlays; };
+      in with pkgs; {
+        devShells.default = mkShell {
+          buildInputs = [ (rust-bin.fromRustupToolchainFile ./rust-toolchain) ];
         };
-        pkgs = (import nixpkgs) {
-          inherit system;
-          overlays = [ (import nixpkgs-mozilla) ];
-        };
-        toolchain = (pkgs.rustChannelOf {
-          rustToolchain = ./rust-toolchain;
-          sha256 = "sha256-DzNEaW724O8/B8844tt5AVHmSjSQ3cmzlU4BP90oRlY=";
-        }).rust;
-      in {
-        defaultPackage = naersk'.buildPackage ./.;
-        devShell = with pkgs;
-          mkShell {
-            buildInputs = [ libiconv toolchain ];
-            RUST_SRC_PATH = rustPlatform.rustLibSrc;
-          };
       });
 }
