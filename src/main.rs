@@ -320,6 +320,14 @@ enum Commands {
     Clean,
 }
 
+// TODO: rather use https://crates.io/crates/cargo_metadata?!
+struct CargoMetadata {
+    root: cargo::Root,
+    version: String,
+    name: String,
+    module: String,
+}
+
 fn main() {
     if let Err(e) = routine() {
         println!("{}{}", Colour::Red.bold().paint("Error: "), e);
@@ -341,29 +349,37 @@ fn routine() -> Result<(), Error> {
                 .map(|s| format!("{}{}", &s[..1].to_uppercase(), &s[1..]))
                 .collect::<Vec<String>>()
                 .join("");
-
-            match command {
-                Commands::Init {
-                    enable_nix,
-                    overwrite,
-                } => init(root, &version, &name, &module, enable_nix, overwrite),
-                Commands::Clean => clean(&name),
+            let metadata = CargoMetadata {
+                root,
+                version,
+                name,
+                module,
+            };
+            if let Commands::Init { .. } = command {
+                init(command, metadata)
+            } else {
+                clean(&metadata.name)
             }
         }
     }
 }
 
-fn init(
-    root: cargo::Root,
-    version: &str,
-    name: &str,
-    module: &str,
-    enable_nix: bool,
-    overwrite: bool,
-) -> Result<(), Error> {
+fn init(args: Commands, metadata: CargoMetadata) -> Result<(), Error> {
+    let Commands::Init {
+        enable_nix,
+        enable_stack,
+        overwrite,
+    } = args else { unreachable!() };
+    let CargoMetadata {
+        root,
+        version,
+        name,
+        module,
+    } = metadata;
+
     // `cargo cabal init --overwrite` == `cargo cabal clean && cargo cabal init`
     if overwrite {
-        clean(name)?;
+        clean(&name)?;
     }
 
     // Check that project have a `crate-type` target ...
@@ -393,12 +409,12 @@ fn init(
     // Generate wanted files from templates ... starting by a `.cabal` ...
     fs::write(
         cabal.clone(),
-        cabal::generate(name, module, version, enable_nix),
+        cabal::generate(&name, &module, &version, enable_nix),
     )
     .or(Err(Error::FailedToWriteFile(cabal)))?;
 
     // `hsbindgen.toml` is a config file readed by `#[hs_bindgen]` proc macro ...
-    fs::write("hsbindgen.toml", hsbindgen::generate(module))
+    fs::write("hsbindgen.toml", hsbindgen::generate(&module))
         .map_err(|_| Error::FailedToWriteFile("hsbindgen.toml".to_owned()))?;
 
     // If `crate-type = [ "cdylib" ]` then a custom `build.rs` is needed ...
