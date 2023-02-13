@@ -49,7 +49,7 @@ custom-setup
 -- documentation, see: http://haskell.org/cabal/users-guide/
 --
 -- The name of the package.
-name:               {module}
+name:               {name}
 
 -- The package version.
 -- See the Haskell package versioning policy (PVP) for standards

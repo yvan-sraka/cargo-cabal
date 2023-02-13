@@ -327,27 +327,29 @@ fn main() {
 }
 
 fn routine() -> Result<(), Error> {
-    // Parse Cargo.toml file content ...
-    let cargo = fs::read_to_string("Cargo.toml").or(Err(Error::NoCargoToml))?;
-    let root: cargo::Root = toml::from_str(&cargo).or(Err(Error::WrongCargoToml))?;
-    let package = root.clone().package.ok_or(Error::NotCargoPackage)?;
-    let version = package.version.unwrap_or_else(|| "0.1.0.0".to_owned());
-    let name = package.name.ok_or(Error::NoCargoNameField)?;
-    let module = name
-        .split(&['-', '_'])
-        .map(|s| format!("{}{}", &s[..1].to_uppercase(), &s[1..]))
-        .collect::<Vec<String>>()
-        .join("");
-
     // Parse `cargo-cabal` CLI arguments
     match Args::parse().cabal {
-        Wrapper::Cabal(command) => match command {
-            Commands::Init {
-                enable_nix,
-                overwrite,
-            } => init(root, &version, &name, &module, enable_nix, overwrite),
-            Commands::Clean => clean(&name),
-        },
+        Wrapper::Cabal(command) => {
+            // Parse Cargo.toml file content ...
+            let cargo = fs::read_to_string("Cargo.toml").or(Err(Error::NoCargoToml))?;
+            let root: cargo::Root = toml::from_str(&cargo).or(Err(Error::WrongCargoToml))?;
+            let package = root.clone().package.ok_or(Error::NotCargoPackage)?;
+            let version = package.version.unwrap_or_else(|| "0.1.0.0".to_owned());
+            let name = package.name.ok_or(Error::NoCargoNameField)?;
+            let module = name
+                .split(&['-', '_'])
+                .map(|s| format!("{}{}", &s[..1].to_uppercase(), &s[1..]))
+                .collect::<Vec<String>>()
+                .join("");
+
+            match command {
+                Commands::Init {
+                    enable_nix,
+                    overwrite,
+                } => init(root, &version, &name, &module, enable_nix, overwrite),
+                Commands::Clean => clean(&name),
+            }
+        }
     }
 }
 
