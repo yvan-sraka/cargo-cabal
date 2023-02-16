@@ -6,7 +6,7 @@ license = "MIT OR Apache-2.0"
 name = "cargo-cabal"
 repository = "https://github.com/yvan-sraka/cargo-cabal"
 rust-version = "1.62.1"
-version = "0.8.3"
+version = "0.8.4"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
