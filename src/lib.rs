@@ -26,7 +26,7 @@ enum Wrapper {
 
 #[derive(Subcommand)]
 enum Commands {
-    /// Initilize the ploject by generating custom Cabal files
+    /// Initialize the project by generating custom Cabal files
     Init {
         /// Generate a haskell.nix / naersk based flake.nix
         #[arg(long)]
@@ -78,7 +78,7 @@ pub fn parse_cli_args(args: Vec<String>) -> Result<(), Error> {
     }
 }
 
-/// Initilize the ploject by generating custom Cabal files
+/// Initialize the project by generating custom Cabal files
 fn cmd_init(args: Commands, metadata: CargoMetadata) -> Result<(), Error> {
     let Commands::Init {
         enable_nix,
