@@ -4,7 +4,7 @@ use thiserror::Error;
 /// CLI errors displayed by `cargo-cabal` to help end-users to set up correctly
 /// their Rust project!
 #[derive(Display, Error, Debug)]
-pub(crate) enum Error {
+pub enum Error {
     /** Fail to read content of `Cargo.toml` file
      *  n.b. you have to run the command from the root folder of your Rust project
      */

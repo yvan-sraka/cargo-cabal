@@ -1,6 +1,9 @@
-/target
-/Cargo.lock
-/greetings.cabal
-/hsbindgen.toml
-/Setup.lhs
-/src/Greetings.hs
+.stack-work
+Cargo.lock
+greetings.cabal
+hsbindgen.toml
+Setup.lhs
+src/Greetings.hs
+stack.yaml
+stack.yaml.lock
+target
