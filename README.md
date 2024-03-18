@@ -245,6 +245,56 @@ Linking /Users/yvan/demo/dist-newstyle/build/aarch64-osx/ghc-9.0.2/test-0.1.0.0/
 Hello, Rust 🦀!
 ```
 
+Now let's see if we can use the GHCi repl to call the functions defined in Rust.
+
+```text
+λ> withCString "aaa" hello
+ghc-9.4.8: ^^ Could not load '__c_hello', dependency unresolved. See top entry above.
+
+
+GHC.ByteCode.Linker: can't find label
+During interactive linking, GHCi couldn't find the following symbol:
+  __c_hello
+This may be due to you not asking GHCi to load extra object files,
+archives or DLLs needed by your current session.  Restart GHCi, specifying
+the missing library using the -L/path/to/object/dir and -lmissinglibname
+flags, or simply by naming the relevant files on the GHCi command line.
+Alternatively, this link failure might indicate a bug in GHCi.
+If you suspect the latter, please report this as a GHC bug:
+  https://www.haskell.org/ghc/reportabug
+```
+
+It seems like GHCi doesn't know how to link the library containing external functions. To fix
+this we first need to change the type of the Rust crate to `cdylib` in `Cargo.toml`:
+
+```toml
+[lib]
+crate-type = ["cdylib"]
+```
+
+Then we need to tell GHCi repl where to look for the missing dynamic library. We can do that by
+specifying the path in a `.ghci` file at the root of the project.
+
+```ghci
+:set -Ltarget/debug -lgreetings
+```
+
+After rebuilding the project with the necessary changes we can try again:
+
+```text
+$ cabal repl
+Build profile: -w ghc-9.4.8 -O1
+In order, the following will be built (use -v for more details):
+ - greetings-0.1.0 (ephemeral targets)
+Preprocessing library for greetings-0.1.0..
+GHCi, version 9.4.8: https://www.haskell.org/ghc/  :? for help
+Loaded GHCi configuration from /path/to/project/greetings/.ghci
+[1 of 1] Compiling Greetings        ( src/Greetings.hs, interpreted )
+Ok, one module loaded.
+λ> withCString "Rust" hello
+Hello, Rust!
+```
+
 That's all folks! Happy hacking 🙂
 
 ## Nix support
