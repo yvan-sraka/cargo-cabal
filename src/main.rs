@@ -262,22 +262,23 @@
 //!   https://www.haskell.org/ghc/reportabug
 //! ```
 //!
-//! It seems like GHCi doesn't know how to link the library containing external functions. To fix
-//! this we first need to change the type of the Rust crate to `cdylib` in `Cargo.toml`:
+//! It seems like GHCi doesn't know how to link the library containing external
+//! functions. To fix this we first need to change the type of the Rust crate to
+//! `cdylib` in `Cargo.toml`. The reason why we need to do this is that GHCi can
+//! only load dynamic libraries, not static ones.
 //!
 //! ```toml
 //! [lib]
 //! crate-type = ["cdylib"]
 //! ```
-//!
-//! Then we need to tell GHCi repl where to look for the missing dynamic library. We can do that by
-//! specifying the path in a `.ghci` file at the root of the project.
+//! Now we need to tell GHCi explicitly where to look for those libraries. We can
+//! do that by specifying the path in a `.ghci` file at the root of the project.
 //!
 //! ```ghci
 //! :set -Ltarget/debug -lgreetings
 //! ```
 //!
-//! After rebuilding the project with the necessary changes we can try again:
+//! After rebuilding the project with the necessary changes we can try once again:
 //!
 //! ```text
 //! $ cabal repl
